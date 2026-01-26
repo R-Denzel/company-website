@@ -366,7 +366,7 @@ const About = () => {
                 description: 'Software-based transaction and POS systems integrated with mobile money and digital payments.',
               },
               {
-                title: 'Cloud-Based Solutions',
+                title: 'Cloud-Based Solutions (Coming Soon)',
                 description: 'Secure deployment, hosting, and management of cloud-based applications and data systems using trusted infrastructure providers.',
               },
             ].map((service, index) => (

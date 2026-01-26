@@ -66,7 +66,7 @@ const Projects = () => {
     },
     {
       icon: Smartphone,
-      name: 'Cloud-Based Solutions',
+      name: 'Cloud-Based Solutions (Coming Soon)',
       description: 'Secure deployment, hosting, and management of cloud applications and data systems.',
     },
   ];
