@@ -21,6 +21,7 @@ import Button from '../components/Button';
 import { sendContactEmail } from '../utils/emailService';
 
 const Contact = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
