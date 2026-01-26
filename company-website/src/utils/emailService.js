@@ -25,8 +25,10 @@ export const sendContactEmail = async (formData) => {
   const templateParams = {
     from_name: formData.name,
     from_email: formData.email,
+    reply_to: formData.email,
     subject: formData.subject,
     message: formData.message,
+    to_email: 'maledenzel@gmail.com',
   };
 
   return emailjs.send(SERVICE_ID, TEMPLATE_ID_CONTACT, templateParams);
@@ -45,8 +47,10 @@ export const sendProposalEmail = async (proposalData) => {
   const templateParams = {
     from_name: proposalData.name,
     from_email: proposalData.email,
+    reply_to: proposalData.email,
     interest_type: proposalData.interest,
     proposal_message: proposalData.proposal,
+    to_email: 'maledenzel@gmail.com',
   };
 
   return emailjs.send(SERVICE_ID, TEMPLATE_ID_PROPOSAL, templateParams);
