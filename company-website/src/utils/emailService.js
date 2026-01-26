@@ -18,6 +18,15 @@ if (PUBLIC_KEY) {
  * @returns {Promise}
  */
 export const sendContactEmail = async (formData) => {
+  // Debug logging
+  console.log('EmailJS Config Check:', {
+    hasServiceId: !!SERVICE_ID,
+    hasTemplateId: !!TEMPLATE_ID_CONTACT,
+    hasPublicKey: !!PUBLIC_KEY,
+    serviceId: SERVICE_ID,
+    templateId: TEMPLATE_ID_CONTACT
+  });
+
   if (!SERVICE_ID || !TEMPLATE_ID_CONTACT || !PUBLIC_KEY) {
     throw new Error('EmailJS configuration is missing. Please check your environment variables.');
   }
@@ -30,6 +39,8 @@ export const sendContactEmail = async (formData) => {
     message: formData.message,
     to_email: 'maledenzel@gmail.com',
   };
+
+  console.log('Sending email with params:', templateParams);
 
   return emailjs.send(SERVICE_ID, TEMPLATE_ID_CONTACT, templateParams);
 };
