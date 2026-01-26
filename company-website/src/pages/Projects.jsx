@@ -41,33 +41,33 @@ const Projects = () => {
   const ourServices = [
     {
       icon: Globe,
-      name: 'Web Development',
-      description: 'Custom web applications built with modern technologies like React, Next.js, and Vue.js',
+      name: 'Web & Mobile Development',
+      description: 'Digital platforms, dashboards, and mobile applications tailored for businesses and institutions.',
     },
     {
-      icon: Smartphone,
-      name: 'Mobile Apps',
-      description: 'Native and cross-platform mobile applications for iOS and Android',
+      icon: Code,
+      name: 'Custom Software Solutions',
+      description: 'Locally relevant digital systems aligned to your specific operational workflows.',
     },
     {
       icon: Zap,
-      name: 'AI & Automation',
-      description: 'AI-powered solutions, machine learning models, and process automation',
+      name: 'AI-Assisted Automation',
+      description: 'AI-powered tools for workflow automation, data processing, and service delivery.',
+    },
+    {
+      icon: Database,
+      name: 'Digital Payment & POS Software',
+      description: 'Transaction and POS systems integrated with mobile money and digital payments.',
     },
     {
       icon: Palette,
       name: 'UI/UX Design',
-      description: 'Beautiful, intuitive interfaces that users love and engage with',
+      description: 'Beautiful, intuitive interfaces that enhance user experience and engagement.',
     },
     {
-      icon: Database,
-      name: 'Backend Systems',
-      description: 'Scalable server-side solutions with secure databases and APIs',
-    },
-    {
-      icon: Code,
-      name: 'Custom Solutions',
-      description: 'Tailored solutions for your unique business challenges',
+      icon: Smartphone,
+      name: 'Cloud-Based Solutions',
+      description: 'Secure deployment, hosting, and management of cloud applications and data systems.',
     },
   ];
 
@@ -132,7 +132,7 @@ const Projects = () => {
               What We Build
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              From concept to launch, we create solutions that matter.
+              Empowering businesses with innovative technology solutions - from concept to launch.
             </p>
           </motion.div>
 

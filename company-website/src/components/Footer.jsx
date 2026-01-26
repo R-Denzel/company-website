@@ -150,7 +150,7 @@ const Footer = () => {
           className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
         >
           <p className="text-gray-600 dark:text-gray-300 text-sm">
-            © 2024 FutureTech. All rights reserved.
+            © 2026 FutureTech. All rights reserved.
           </p>
           <div className="flex items-center space-x-6">
             <Link

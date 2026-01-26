@@ -1,7 +1,7 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, 
   Lightbulb, 
@@ -16,6 +16,7 @@ import {
 import Button from '../components/Button';
 import ThemeToggle from '../components/ThemeToggle';
 const Home = () => {
+  const navigate = useNavigate();
   const features = [
     {
       icon: Lightbulb,
@@ -147,7 +148,7 @@ const Home = () => {
                 variant="neon"
                 size="lg"
                 className="group"
-                onClick={() => document.getElementById('opportunities').scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => navigate('/opportunities')}
               >
                 Explore Opportunities
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -156,7 +157,7 @@ const Home = () => {
                 variant="outline"
                 size="lg"
                 className="border-white text-white hover:bg-white hover:text-gray-900"
-                onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => navigate('/contact')}
               >
                 Share Your Idea
                 <Lightbulb className="ml-2 w-5 h-5" />

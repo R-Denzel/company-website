@@ -64,19 +64,19 @@ const About = () => {
       icon: TrendingUp,
     },
     {
-      year: '2025',
+      year: '2026',
       title: 'Team Expansion',
       description: 'Grew our team of  talented professionals across multiple disciplines.',
       icon: Users,
     },
     {
-      year: '2025',
+      year: '2026',
       title: 'AI Integration',
       description: 'Launched our AI automation services, helping businesses streamline operations.',
       icon: Lightbulb,
     },
     {
-      year: '2025',
+      year: '2026',
       title: 'Global Reach',
       description: 'Expanded our services internationally, serving clients across different countries.',
       icon: Award,
