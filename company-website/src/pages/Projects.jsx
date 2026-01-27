@@ -190,13 +190,6 @@ const Projects = () => {
             </div>
           </motion.div>
         </div>
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
       </section>
 
       {/* Project Inquiry CTA */}
