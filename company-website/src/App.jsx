@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import BackgroundMusic from './components/BackgroundMusic';
 
 // Import pages
 import Home from './pages/Home';
@@ -40,6 +41,7 @@ function App() {
           </main>
           <Footer />
         </div>
+        <BackgroundMusic />
         <Analytics />
       </Router>
     </ThemeProvider>
