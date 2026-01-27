@@ -54,7 +54,7 @@ const About = () => {
     {
       year: '2024 ',
       title: 'Company  Founded',
-      description: 'FutureTech was established with a vision to revolutionize the tech industry.',
+      description: 'FutureTech was established with a vision to revolutionize the tech industry .',
       icon: Zap,
     },
     {
@@ -246,8 +246,10 @@ const About = () => {
           </motion.div>
 
           <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary-500 to-secondary-500"></div>
+            {/* Timeline Line - Hidden on mobile, shown on desktop */}
+            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-primary-500 to-secondary-500"></div>
+            {/* Mobile Timeline Line */}
+            <div className="md:hidden absolute left-8 top-0 w-1 h-full bg-gradient-to-b from-primary-500 to-secondary-500"></div>
 
             <div className="space-y-12">
               {timeline.map((item, index) => (
@@ -256,31 +258,31 @@ const About = () => {
                   initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className={`flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
+                  className={`flex items-center ${index % 2 === 0 ? 'md:flex-row flex-row' : 'md:flex-row-reverse flex-row'}`}
                 >
-                  <div className={`w-1/2 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
+                  <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:pr-8 md:text-right pl-16 md:pl-0' : 'md:pl-8 md:text-left pl-16 md:pl-0'}`}>
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
-                      <div className="flex items-center mb-4">
+                      <div className="flex items-center mb-4 md:justify-start justify-start">
                         <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mr-4">
                           <item.icon className="w-6 h-6 text-white" />
                         </div>
-                        <div>
+                        <div className="text-left">
                           <div className="text-2xl font-bold text-primary-500">{item.year}</div>
                           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                             {item.title}
                           </h3>
                         </div>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-300">
+                      <p className="text-gray-600 dark:text-gray-300 text-left">
                         {item.description}
                       </p>
                     </div>
                   </div>
 
-                  {/* Timeline Dot */}
-                  <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white dark:bg-gray-800 border-4 border-primary-500 rounded-full"></div>
+                  {/* Timeline Dot - Centered on desktop, left-aligned on mobile */}
+                  <div className="absolute left-8 md:left-1/2 transform md:-translate-x-1/2 -translate-x-1/2 w-6 h-6 bg-white dark:bg-gray-800 border-4 border-primary-500 rounded-full"></div>
 
-                  <div className="w-1/2"></div>
+                  <div className="hidden md:block md:w-1/2"></div>
                 </motion.div>
               ))}
             </div>
