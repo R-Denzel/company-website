@@ -1,30 +1,54 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const BackgroundMusic = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
   const audioRef = useRef(null);
+  const location = useLocation();
+
+  // Only show on home page
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 0.3; // Set to 30% volume for background music
-    }
-  }, []);
-
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play().catch(err => {
-          console.log('Audio play failed:', err);
-        });
+      audioRef.current.volume = 0.3; // Set to 30% volume
+      
+      // Auto-play on home page load (only once)
+      if (isHomePage && !hasPlayed) {
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              setIsPlaying(true);
+              setHasPlayed(true);
+            })
+            .catch(err => {
+              console.log('Autoplay prevented:', err);
+              // If autoplay fails, user will need to click the button
+            });
+        }
       }
-      setIsPlaying(!isPlaying);
-      setIsMuted(false);
     }
-  };
+  }, [isHomePage, hasPlayed]);
+
+  // Handle time update to stop at 33 seconds
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleTimeUpdate = () => {
+      if (audio.currentTime >= 33) {
+        audio.pause();
+        setIsPlaying(false);
+      }
+    };
+
+    audio.addEventListener('timeupdate', handleTimeUpdate);
+    return () => audio.removeEventListener('timeupdate', handleTimeUpdate);
+  }, []);
 
   const toggleMute = () => {
     if (audioRef.current) {
@@ -33,7 +57,7 @@ const BackgroundMusic = () => {
       setIsMuted(newMutedState);
       
       // If unmuting and not playing, start playing
-      if (!newMutedState && !isPlaying) {
+      if (!newMutedState && !isPlaying && audioRef.current.currentTime < 33) {
         audioRef.current.play().catch(err => {
           console.log('Audio play failed:', err);
         });
@@ -42,12 +66,14 @@ const BackgroundMusic = () => {
     }
   };
 
+  // Don't render on other pages
+  if (!isHomePage) return null;
+
   return (
     <>
-      {/* Audio element - Add your music file to /public/music.mp3 */}
+      {/* Audio element */}
       <audio
         ref={audioRef}
-        loop
         muted={isMuted}
         onEnded={() => setIsPlaying(false)}
       >
