@@ -37,7 +37,7 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      details: ['futuretech@gmail.com', 'support@futuretech.com'],
+      details: ['futuretechafrica1.0@gmail.com', 'support@futuretech.com'],
       description: 'Send us an email and we\'ll respond within 24 hours.',
     },
     {
@@ -50,7 +50,7 @@ const Contact = () => {
       icon: MapPin,
       title: 'Visit Us',
       details: ['kilimani ', 'Nairobi, Kenya'],
-      description: 'Come visit our office in the heart of Nairobi.',
+      description: 'Located in Nairobi, Kenya.',
     },
     {
       icon: Clock,
