@@ -1,4 +1,7 @@
 {
+  "buildCommand": "cd company-website && npm run build",
+  "outputDirectory": "company-website/dist",
+  "installCommand": "cd company-website && npm install",
   "rewrites": [
     {
       "source": "/(.*)",
