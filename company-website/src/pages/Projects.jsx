@@ -170,44 +170,26 @@ const Projects = () => {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center"
           >
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              View Our Portfolio
+              Our Portfolio
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-              Explore some of our recent projects and case studies.
-            </p>
-            <Link to="/projects">
-              <Button variant="neon" size="lg">
-                View Full Portfolio
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
+            <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl p-12 shadow-lg">
+              <div className="flex flex-col items-center space-y-6">
+                <div className="w-20 h-20 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
+                  <Code className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Under Maintenance
+                </h3>
+                <p className="text-lg text-gray-600 dark:text-gray-300 text-center">
+                  We're currently updating our portfolio with our latest projects and case studies. Check back soon to see our amazing work!
+                </p>
+              </div>
+            </div>
           </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {categories.slice(0, 4).map((category, index) => {
-              const Icon = category.icon;
-              return (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg"
-                >
-                  <div className={`w-16 h-16 bg-gradient-to-r ${category.color} rounded-full flex items-center justify-center mb-6`}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                    {category.name}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">
-                    We've successfully delivered projects in this category. View our recent work and case studies.
-                  </p>
-                  <Button variant="outline" className="w-full">
-                    View Projects
+        </div>
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </motion.div>
