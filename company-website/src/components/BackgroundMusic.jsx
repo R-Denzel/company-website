@@ -14,10 +14,12 @@ const BackgroundMusic = () => {
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = 0.3; // Set to 30% volume
+      audioRef.current.volume = 0.5; // Set to 50% volume for better audibility
       
       // Auto-play on home page load (only once)
       if (isHomePage && !hasPlayed) {
+        // Ensure audio is unmuted
+        audioRef.current.muted = false;
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
           playPromise
