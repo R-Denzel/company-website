@@ -1,442 +1,219 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { 
-  Briefcase, 
-  Users, 
-  Handshake, 
-  Lightbulb,
-  ArrowRight,
-  CheckCircle,
-  Send,
-  AlertCircle
-} from 'lucide-react';
+import { AlertCircle, ArrowRight, CheckCircle2, Handshake, Lightbulb, Send, Users, X } from 'lucide-react';
 import Button from '../components/Button';
 import { sendProposalEmail } from '../utils/emailService';
 
+const collaborationWays = [
+  {
+    icon: Users,
+    title: 'Share your expertise',
+    description: 'Tell us about your experience and the kinds of projects you would be interested in contributing to.',
+  },
+  {
+    icon: Handshake,
+    title: 'Explore a partnership',
+    description: 'Have an idea for working together? Share the context and what a useful collaboration could look like.',
+  },
+  {
+    icon: Lightbulb,
+    title: 'Propose an idea',
+    description: 'Bring forward a product or project idea and start a conversation with our team.',
+  },
+];
+
 const Opportunities = () => {
-  const [showProposalForm, setShowProposalForm] = useState(false);
-  const [proposalData, setProposalData] = useState({
-    name: '',
-    email: '',
-    proposal: '',
-    interest: 'general',
-  });
-  const [proposalSubmitted, setProposalSubmitted] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', proposal: '', interest: 'general' });
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
-  const apps = [
-    {
-      id: 'handyman',
-      name: 'Handyman App',
-      description: 'A mobile and web platform connecting customers with verified handymen for home maintenance, repairs, and improvements. The app features real-time booking, ratings, and secure payments.',
-      requirements: [
-        'Mobile app development (React Native or Flutter)',
-        'Web frontend (React/Next.js)',
-        'Backend API development (Node.js/Python)',
-        'Real-time features',
-        'Payment integration',
-      ],
-      roles: ['Frontend Developer', 'Mobile Developer', 'Backend Developer', 'UI/UX Designer', 'DevOps Engineer'],
-    },
-    {
-      id: 'aichat',
-      name: 'AI Chat & Counsel App',
-      description: 'An AI-powered chat application designed to support people during late-night hours, providing counseling, mentorship, and human connection. Uses advanced NLP and sentiment analysis to provide empathetic responses.',
-      requirements: [
-        'AI/ML expertise (NLP, chatbot development)',
-        'Mobile and web development',
-        'Real-time messaging infrastructure',
-        'Database design for conversations',
-        'Security & privacy implementation',
-      ],
-      roles: ['AI/ML Engineer', 'Full-stack Developer', 'Backend Developer', 'Mobile Developer', 'Data Scientist'],
-    },
-  ];
-
-  const collaborationTypes = [
-    {
-      type: 'Internship',
-      icon: Users,
-      description: 'Learn and grow with us while contributing to real projects',
-    },
-    {
-      type: 'Partnership',
-      icon: Handshake,
-      description: 'Collaborate as equals on projects that matter',
-    },
-    {
-      type: 'Collaboration',
-      icon: Lightbulb,
-      description: 'Work together on specific features or components',
-    },
-  ];
-
-  const handleProposalChange = (e) => {
-    const { name, value } = e.target;
-    setProposalData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleProposalSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setIsLoading(true);
-    setError(null);
+    setError('');
 
     try {
-      await sendProposalEmail(proposalData);
-      setProposalSubmitted(true);
-      setTimeout(() => {
-        setShowProposalForm(false);
-        setProposalSubmitted(false);
-        setProposalData({
-          name: '',
-          email: '',
-          proposal: '',
-          interest: 'general',
-        });
-      }, 3000);
-    } catch (err) {
-      console.error('Error sending proposal:', err);
-      setError('Failed to submit proposal. Please try again or contact us directly.');
+      await sendProposalEmail(formData);
+      setIsSubmitted(true);
+    } catch (submitError) {
+      console.error('Error sending collaboration inquiry:', submitError);
+      setError('We couldn’t send your inquiry. Please try again or email us directly.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-primary-500 to-secondary-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <h1 className="text-5xl md:text-6xl font-bold text-white">
-              Collaboration Opportunities
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto">
-              We're building innovative applications and looking for talented developers to collaborate with us on exciting projects.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setIsSubmitted(false);
+    setError('');
+  };
 
-      {/* No Current Opportunities Section */}
-      <section className="py-20 bg-surface-light dark:bg-surface-dark">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center bg-white dark:bg-gray-800 rounded-xl p-12 shadow-lg"
-          >
-            <Briefcase className="w-16 h-16 text-gray-400 mx-auto mb-6" />
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              No Opportunities At The Moment
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-              We have some exciting applications under development and are actively looking for talented developers to collaborate with us. If you're interested in joining our team for any of these projects, submit your proposal below!
+  return (
+    <div className="bg-[#080B11]">
+      <section className="relative isolate overflow-hidden border-b border-white/[0.08]">
+        <div className="absolute inset-0 -z-10 bg-pattern opacity-30" />
+        <div className="absolute -left-40 top-0 -z-10 h-96 w-96 rounded-full bg-[#D4AF37]/[0.05] blur-[110px]" />
+        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-3xl">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Work with us</p>
+            <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-slate-100 sm:text-6xl">Good work starts with a good collaboration.</h1>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
+              We welcome thoughtful enquiries from people and organizations interested in building useful digital products with FutureTech Africa.
             </p>
-            <Button
-              variant="neon"
-              size="lg"
-              onClick={() => setShowProposalForm(true)}
-            >
-              Submit Your Proposal
-              <ArrowRight className="ml-2 w-5 h-5" />
+            <Button className="mt-8" size="lg" onClick={() => setIsFormOpen(true)}>
+              Send a collaboration enquiry
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </motion.div>
         </div>
       </section>
 
-      {/* Apps Under Development */}
-      <section className="py-20 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Applications In Development
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              We're building these innovative solutions and actively seeking collaborators with specific expertise.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {apps.map((app, index) => (
-              <motion.div
-                key={app.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                className="bg-surface-light dark:bg-gray-800 rounded-xl p-8 shadow-lg"
-              >
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  {app.name}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  {app.description}
-                </p>
-
-                <div className="mb-8">
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Tech Stack & Requirements
-                  </h4>
-                  <ul className="space-y-3">
-                    {app.requirements.map((req, idx) => (
-                      <li key={idx} className="flex items-start space-x-3">
-                        <CheckCircle className="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 dark:text-gray-300">{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Open Roles
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {app.roles.map((role, idx) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium"
-                      >
-                        {role}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+      <section className="py-20 sm:py-24">
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Ways to connect</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100 sm:text-4xl">What would you like to explore?</h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400">This is an open enquiry channel, not a list of active job vacancies.</p>
           </div>
-        </div>
-      </section>
-
-      {/* Collaboration Types */}
-      <section className="py-20 bg-surface-light dark:bg-surface-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Ways To Collaborate
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              Choose the collaboration model that works best for you.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {collaborationTypes.map((collab, index) => {
-              const Icon = collab.icon;
+          <div className="grid gap-4 md:grid-cols-3">
+            {collaborationWays.map((way, index) => {
+              const Icon = way.icon;
               return (
-                <motion.div
-                  key={collab.type}
-                  initial={{ opacity: 0, y: 20 }}
+                <motion.article
+                  key={way.title}
+                  initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: index * 0.15 }}
-                  className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow duration-300"
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={{ duration: 0.4, delay: index * 0.07 }}
+                  className="rounded-xl border border-white/[0.08] bg-[#0D121B] p-6 sm:p-7"
                 >
-                  <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                    {collab.type}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {collab.description}
-                  </p>
-                </motion.div>
+                  <span className="grid h-11 w-11 place-items-center rounded-lg border border-[#D4AF37]/20 bg-[#D4AF37]/[0.06] text-[#E5C158]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-5 text-base font-semibold text-slate-100">{way.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">{way.description}</p>
+                </motion.article>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* Proposal Form Modal */}
-      {showProposalForm && (
-        <section className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-          >
-            <div className="p-8">
-              {proposalSubmitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
-                >
-                  <div className="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-8 h-8 text-green-500" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                    Proposal Submitted!
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Thank you for your interest. We'll review your proposal and get back to you soon.
-                  </p>
-                </motion.div>
-              ) : (
-                <>
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                      Submit Your Proposal
-                    </h2>
-                    <button
-                      onClick={() => setShowProposalForm(false)}
-                      className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                    >
-                      ✕
-                    </button>
-                  </div>
-
-                  <form onSubmit={handleProposalSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Your Name *
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          value={proposalData.name}
-                          onChange={handleProposalChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
-                          placeholder="Your full name"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Email Address *
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={proposalData.email}
-                          onChange={handleProposalChange}
-                          required
-                          className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
-                          placeholder="your@email.com"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Type of Interest *
-                      </label>
-                      <select
-                        name="interest"
-                        value={proposalData.interest}
-                        onChange={handleProposalChange}
-                        className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
-                      >
-                        <option value="general">General Inquiry</option>
-                        <option value="handyman">Handyman App Collaboration</option>
-                        <option value="aichat">AI Chat App Collaboration</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Your Proposal *
-                      </label>
-                      <textarea
-                        name="proposal"
-                        value={proposalData.proposal}
-                        onChange={handleProposalChange}
-                        required
-                        rows={8}
-                        className="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
-                        placeholder="Tell us about your background, expertise, and what you'd like to contribute to this project..."
-                      />
-                    </div>
-
-                    {error && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-3 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg"
-                      >
-                        <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                        <p className="text-red-700 dark:text-red-300">{error}</p>
-                      </motion.div>
-                    )}
-
-                    <div className="flex gap-4">
-                      <Button 
-                        type="submit" 
-                        variant="neon" 
-                        size="lg" 
-                        className="flex-1"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? 'Submitting...' : 'Submit Proposal'}
-                        <Send className="ml-2 w-5 h-5" />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="lg"
-                        className="flex-1"
-                        onClick={() => setShowProposalForm(false)}
-                        disabled={isLoading}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                </>
-              )}
-            </div>
-          </motion.div>
-        </section>
-      )}
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-gray-900 to-gray-800 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="space-y-6"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold">
-              Ready to Make an Impact?
-            </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              If you're a talented developer looking for meaningful collaboration opportunities, we'd love to hear from you.
-            </p>
-            <Button
-              variant="neon"
-              size="lg"
-              onClick={() => setShowProposalForm(true)}
-            >
-              Submit Your Proposal
-              <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </motion.div>
+      <section className="border-y border-white/[0.08] bg-[#0B0F17] py-16 sm:py-20">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Have something in mind?</p>
+            <h2 className="mt-3 text-2xl font-semibold text-slate-100 sm:text-3xl">Tell us what you’d like to work on.</h2>
+            <p className="mt-2 text-sm text-slate-400">Share a few details and our team can take it from there.</p>
+          </div>
+          <Button size="lg" onClick={() => setIsFormOpen(true)}>
+            Start an enquiry
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       </section>
+
+      {isFormOpen && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-md"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !isLoading) closeForm();
+          }}
+        >
+          <motion.section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="collaboration-form-title"
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className="my-auto w-full max-w-2xl rounded-xl border border-white/10 bg-[#0D121B] p-5 shadow-2xl sm:p-8"
+          >
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#D4AF37]">Collaboration enquiry</p>
+                <h2 id="collaboration-form-title" className="mt-2 text-2xl font-semibold text-slate-100">
+                  {isSubmitted ? 'Thanks for reaching out.' : 'Tell us about your idea.'}
+                </h2>
+              </div>
+              <button type="button" onClick={closeForm} disabled={isLoading} aria-label="Close enquiry form" className="rounded-md p-2 text-slate-500 transition hover:bg-white/[0.05] hover:text-white disabled:opacity-40">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {isSubmitted ? (
+              <div role="status" className="py-10 text-center">
+                <CheckCircle2 className="mx-auto h-10 w-10 text-[#E5C158]" />
+                <p className="mt-4 text-sm leading-7 text-slate-400">Your enquiry has been sent to our team.</p>
+                <Button className="mt-6" variant="secondary" onClick={closeForm}>Close</Button>
+              </div>
+            ) : (
+              <form className="mt-7 space-y-5" onSubmit={handleSubmit}>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="text-xs font-medium text-slate-300">
+                    Your name *
+                    <input
+                      required
+                      autoComplete="name"
+                      value={formData.name}
+                      onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
+                      className="mt-2 w-full rounded-lg border border-white/10 bg-[#080B11] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-[#D4AF37]/60"
+                    />
+                  </label>
+                  <label className="text-xs font-medium text-slate-300">
+                    Email address *
+                    <input
+                      required
+                      type="email"
+                      autoComplete="email"
+                      value={formData.email}
+                      onChange={(event) => setFormData((current) => ({ ...current, email: event.target.value }))}
+                      className="mt-2 w-full rounded-lg border border-white/10 bg-[#080B11] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-[#D4AF37]/60"
+                    />
+                  </label>
+                </div>
+                <label className="block text-xs font-medium text-slate-300">
+                  What kind of enquiry is this?
+                  <select
+                    value={formData.interest}
+                    onChange={(event) => setFormData((current) => ({ ...current, interest: event.target.value }))}
+                    className="mt-2 w-full rounded-lg border border-white/10 bg-[#080B11] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-[#D4AF37]/60"
+                  >
+                    <option value="general">General enquiry</option>
+                    <option value="partnership">Partnership</option>
+                    <option value="collaboration">Project collaboration</option>
+                    <option value="internship">Internship enquiry</option>
+                  </select>
+                </label>
+                <label className="block text-xs font-medium text-slate-300">
+                  Your message *
+                  <textarea
+                    required
+                    rows={6}
+                    value={formData.proposal}
+                    onChange={(event) => setFormData((current) => ({ ...current, proposal: event.target.value }))}
+                    className="mt-2 w-full resize-y rounded-lg border border-white/10 bg-[#080B11] px-4 py-3 text-sm leading-6 text-slate-100 outline-none transition focus:border-[#D4AF37]/60"
+                    placeholder="Share your idea, experience, or the kind of collaboration you have in mind."
+                  />
+                </label>
+                {error && (
+                  <div role="alert" className="flex items-start gap-3 rounded-lg border border-red-500/25 bg-red-500/[0.07] p-4 text-sm text-red-200">
+                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+                <Button type="submit" size="lg" disabled={isLoading}>
+                  {isLoading ? 'Sending…' : 'Send enquiry'}
+                  <Send className="ml-2 h-4 w-4" />
+                </Button>
+              </form>
+            )}
+          </motion.section>
+        </div>
+      )}
     </div>
   );
 };

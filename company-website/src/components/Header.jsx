@@ -1,117 +1,120 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Zap } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
+
+const navigation = [
+  { name: 'About', href: '/about' },
+  { name: 'Team', href: '/team' },
+  { name: 'Services', href: '/projects' },
+  { name: 'Opportunities', href: '/opportunities' },
+  { name: 'Pricing', href: '/#pricing' },
+];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Opportunities', href: '/opportunities' },
-    { name: 'Projects', href: '/projects' },
-    { name: 'Contact', href: '/contact' },
-  ];
-
-  const isActive = (path) => location.pathname === path;
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800"
+      initial={{ y: -16, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.07] bg-[#080B11]/90 backdrop-blur-xl"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center space-x-2"
-          >
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="relative">
-                <Zap className="w-8 h-8 text-primary-500" />
-                <motion.div
-                  className="absolute inset-0 w-8 h-8 bg-primary-500/20 rounded-full"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent">
-                FutureTech
-              </span>
-            </Link>
-          </motion.div>
+      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-5 sm:px-8">
+        <Link to="/" onClick={closeMenu} className="group flex items-center gap-3" aria-label="FutureTech Africa home">
+          <span className="grid h-10 w-10 place-items-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/[0.08] font-display text-sm font-bold tracking-tight text-[#E5C158] transition group-hover:border-[#D4AF37]/70">
+            FT
+          </span>
+          <span className="leading-tight">
+            <span className="block text-[15px] font-semibold tracking-wide text-slate-100">FutureTech</span>
+            <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.24em] text-slate-500">Africa</span>
+          </span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
+        <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
+          {navigation.map((item) => {
+            const isActive = item.href.startsWith('/#')
+              ? location.pathname === '/'
+              : location.pathname === item.href;
+
+            return (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`relative px-3 py-2 text-sm font-medium transition-colors duration-300 ${
-                  isActive(item.href)
-                    ? 'text-primary-500'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-primary-500'
+                className={`relative py-2 text-sm transition-colors ${
+                  isActive ? 'text-[#E5C158]' : 'text-slate-400 hover:text-slate-100'
                 }`}
               >
                 {item.name}
-                {isActive(item.href) && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-primary-500/10 rounded-lg"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                {isActive && (
+                  <motion.span
+                    layoutId="active-nav"
+                    className="absolute inset-x-0 -bottom-[1px] h-px bg-[#D4AF37]"
+                    transition={{ duration: 0.22 }}
                   />
                 )}
               </Link>
-            ))}
-          </nav>
+            );
+          })}
+        </nav>
 
-          {/* Right side */}
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+        <div className="hidden lg:block">
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 rounded-md border border-[#D4AF37]/55 px-4 py-2.5 text-sm font-semibold text-[#E5C158] transition hover:border-[#E5C158] hover:bg-[#D4AF37]/[0.08]"
+          >
+            Start a project
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        {/* Mobile Navigation */}
-        <motion.div
-          initial={false}
-          animate={{ height: isMenuOpen ? "auto" : 0 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden overflow-hidden"
+        <button
+          type="button"
+          className="rounded-md border border-white/10 p-2 text-slate-300 transition hover:border-white/25 hover:text-white lg:hidden"
+          aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={isMenuOpen}
+          onClick={() => setIsMenuOpen((open) => !open)}
         >
-          <div className="py-4 space-y-2">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={() => setIsMenuOpen(false)}
-                className={`block px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-300 ${
-                  isActive(item.href)
-                    ? 'text-primary-500 bg-primary-500/10'
-                    : 'text-gray-600 dark:text-gray-300 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-gray-800'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </motion.div>
+          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      <motion.nav
+        initial={false}
+        animate={{ height: isMenuOpen ? 'auto' : 0, opacity: isMenuOpen ? 1 : 0 }}
+        transition={{ duration: 0.22 }}
+        className="overflow-hidden border-t border-white/[0.07] bg-[#080B11] lg:hidden"
+        aria-label="Mobile navigation"
+        aria-hidden={!isMenuOpen}
+      >
+        <div className="mx-auto max-w-7xl space-y-1 px-5 py-4 sm:px-8">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              to={item.href}
+              onClick={closeMenu}
+              tabIndex={isMenuOpen ? 0 : -1}
+              className="block rounded-md px-3 py-3 text-sm text-slate-300 transition hover:bg-white/[0.04] hover:text-[#E5C158]"
+            >
+              {item.name}
+            </Link>
+          ))}
+          <Link
+            to="/contact"
+            onClick={closeMenu}
+            tabIndex={isMenuOpen ? 0 : -1}
+            className="mt-2 inline-flex items-center gap-2 rounded-md bg-[#D4AF37] px-4 py-3 text-sm font-semibold text-[#11140F]"
+          >
+            Start a project
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </motion.nav>
     </motion.header>
   );
 };
