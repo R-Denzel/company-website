@@ -1,7 +1,8 @@
-import { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
-import { ArrowRight, Check, ChevronDown } from 'lucide-react';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { Check, Plus } from 'lucide-react';
+import Button from './Button';
+import Collapse from './Collapse';
+import { gsap, prefersReducedMotion, ScrollTrigger, useGSAP } from '../lib/gsap';
 
 const markets = [
   { country: 'Uganda', code: 'UG', currency: 'UGX', rate: 4085.836012 },
@@ -326,10 +327,100 @@ const pricingCategories = [
   },
 ];
 
+const FeatureList = ({ features }) => (
+  <ul className="space-y-3">
+    {features.map((feature) => (
+      <li key={feature} className="flex gap-3 text-sm leading-6">
+        <Check aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-violet" />
+        {feature}
+      </li>
+    ))}
+  </ul>
+);
+
+const PackageCard = ({ item, category, price, onAsk }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const panelId = `package-${category.id}-${item.name.replace(/\s+/g, '-').toLowerCase()}`;
+
+  return (
+    <article data-package className="flex flex-col rounded-2xl border border-line bg-paper p-6 transition-colors duration-500 hover:border-violet sm:p-8">
+      <h3 className="text-xl font-semibold tracking-[-0.02em]">{item.name}</h3>
+      <p className="mt-2 min-h-12 text-sm leading-6 text-muted">{item.description}</p>
+      <p className="mt-8 text-[2.5rem] font-medium leading-none tracking-[-0.035em] tabular-nums">{price}</p>
+      <p className="mt-3 text-sm text-muted">
+        {category.billingPeriod === 'monthly'
+          ? 'Indicative monthly estimate'
+          : category.billingPeriod === 'unspecified'
+            ? 'Indicative reference estimate'
+            : 'Indicative starting estimate'}
+      </p>
+      <p className="mt-1 text-sm text-muted">
+        USD estimate: US${item.usdPrice.toLocaleString('en-US')}
+        {category.billingPeriod === 'monthly' ? ' / month' : ''}
+        {category.billingPeriod === 'unspecified' ? ' · period not stated' : ''}
+      </p>
+
+      <div className="mt-6 border-t border-line pt-6">
+        <FeatureList features={item.includes.slice(0, 4)} />
+        <Collapse open={isOpen} id={panelId}>
+          <div className="pt-3"><FeatureList features={item.includes.slice(4)} /></div>
+        </Collapse>
+      </div>
+
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        onClick={() => setIsOpen((current) => !current)}
+        className="mt-5 flex items-center justify-between gap-3 py-2 text-left text-sm font-semibold"
+      >
+        <span>{isOpen ? 'Show less' : `Full package breakdown (${item.includes.length} items)`}</span>
+        <Plus aria-hidden="true" className={`h-4 w-4 shrink-0 transition-transform duration-500 ease-soft ${isOpen ? 'rotate-45' : ''}`} />
+      </button>
+
+      <div className="mt-auto pt-6">
+        <Button variant="secondary" className="w-full !justify-between" onClick={onAsk}>
+          Ask about this package
+        </Button>
+      </div>
+    </article>
+  );
+};
+
 const WebsitePackages = ({ onAskAboutPackage }) => {
   const [selectedMarket, setSelectedMarket] = useState(markets[0]);
   const [selectedCategoryId, setSelectedCategoryId] = useState(pricingCategories[0].id);
   const selectedCategory = pricingCategories.find((category) => category.id === selectedCategoryId);
+  const grid = useRef(null);
+  const tabs = useRef(null);
+  const indicator = useRef(null);
+  const hasSwitched = useRef(false);
+
+  // Slides the dark pill behind whichever category is selected.
+  useLayoutEffect(() => {
+    const place = () => {
+      const active = tabs.current?.querySelector('[aria-pressed="true"]');
+      if (!active) return;
+      Object.assign(indicator.current.style, {
+        width: `${active.offsetWidth}px`,
+        height: `${active.offsetHeight}px`,
+        transform: `translate(${active.offsetLeft}px, ${active.offsetTop}px)`,
+      });
+    };
+
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(tabs.current);
+    return () => observer.disconnect();
+  }, [selectedCategoryId]);
+
+  useGSAP(() => {
+    if (!hasSwitched.current) return;
+    if (!prefersReducedMotion()) {
+      gsap.fromTo('[data-package]', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: 'soft', stagger: 0.06 });
+    }
+    ScrollTrigger.refresh();
+  }, { dependencies: [selectedCategoryId], scope: grid });
 
   const formatPrice = (usdPrice) => {
     const convertedPrice = usdPrice * selectedMarket.rate;
@@ -345,47 +436,46 @@ const WebsitePackages = ({ onAskAboutPackage }) => {
   };
 
   return (
-    <section id="pricing" className="scroll-mt-24 bg-[#0B0F17] py-20 sm:py-24">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="mx-auto mb-11 max-w-2xl text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Service pricing</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-slate-100 sm:text-4xl">Pricing breakdowns and inclusions.</h2>
-          <p className="mt-4 text-sm leading-7 text-slate-400 sm:text-base">
-            Choose a service and country to compare plans, inclusions, and local-currency estimates.
-          </p>
-        </div>
-
-        <div className="mb-7 flex flex-col gap-4 rounded-xl border border-white/[0.08] bg-[#0D121B] p-5 sm:flex-row sm:items-center sm:justify-between">
+    <section id="pricing" className="scroll-mt-20 border-t border-line py-20 sm:py-32">
+      <div className="shell">
+        <div className="split">
+          <h2 data-split className="max-w-md text-title font-medium">Pricing breakdowns and inclusions.</h2>
           <div>
-            <label htmlFor="pricing-country" className="block text-sm font-semibold text-slate-100">View an indicative market estimate</label>
-            <p className="mt-1 text-xs text-slate-500">Select a country and currency.</p>
+            <p data-fade className="max-w-xl text-lead text-muted">
+              Choose a service and country to compare plans, inclusions, and local-currency estimates.
+            </p>
+            <label htmlFor="pricing-country" className="mt-8 block max-w-sm text-sm font-medium">
+              View an indicative market estimate
+              <select
+                id="pricing-country"
+                value={selectedMarket.code}
+                onChange={(event) => {
+                  const market = markets.find((option) => option.code === event.target.value);
+                  if (market) setSelectedMarket(market);
+                }}
+                className="field"
+              >
+                {markets.map((market) => (
+                  <option key={market.code} value={market.code}>{market.country} ({market.currency})</option>
+                ))}
+              </select>
+            </label>
           </div>
-          <select
-            id="pricing-country"
-            value={selectedMarket.code}
-            onChange={(event) => {
-              const market = markets.find((option) => option.code === event.target.value);
-              if (market) setSelectedMarket(market);
-            }}
-            className="w-full rounded-lg border border-white/10 bg-[#111722] px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-[#D4AF37]/60 sm:w-64"
-          >
-            {markets.map((market) => (
-              <option key={market.code} value={market.code}>{market.country} ({market.currency})</option>
-            ))}
-          </select>
         </div>
 
-        <div className="mb-7 flex flex-wrap gap-2" role="group" aria-label="Choose a service pricing category">
+        <div ref={tabs} role="group" aria-label="Choose a service pricing category" className="relative mt-14 inline-flex max-w-full flex-wrap gap-1 rounded-[1.75rem] bg-mist p-1">
+          <span ref={indicator} aria-hidden="true" className="absolute left-0 top-0 rounded-full bg-violet transition-all duration-500 ease-soft" />
           {pricingCategories.map((category) => (
             <button
               key={category.id}
               type="button"
               aria-pressed={selectedCategoryId === category.id}
-              onClick={() => setSelectedCategoryId(category.id)}
-              className={`rounded-lg border px-4 py-2.5 text-xs font-semibold transition ${
-                selectedCategoryId === category.id
-                  ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#E5C158]'
-                  : 'border-white/10 bg-[#0D121B] text-slate-400 hover:border-white/25 hover:text-slate-100'
+              onClick={() => {
+                hasSwitched.current = true;
+                setSelectedCategoryId(category.id);
+              }}
+              className={`relative z-10 h-11 rounded-full px-5 text-sm font-medium transition-colors duration-500 ${
+                selectedCategoryId === category.id ? 'text-paper' : 'text-ink hover:text-muted'
               }`}
             >
               {category.label}
@@ -393,74 +483,24 @@ const WebsitePackages = ({ onAskAboutPackage }) => {
           ))}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {selectedCategory.packages.map((item, index) => (
-            <motion.article
-              key={item.name}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.42, delay: index * 0.045 }}
-              className="flex flex-col rounded-xl border border-white/[0.09] bg-[#0D121B] p-6 transition duration-300 hover:border-[#D4AF37]/30"
-            >
-              <h3 className="text-base font-semibold text-slate-100">{item.name}</h3>
-              <p className="mt-2 min-h-12 text-xs leading-6 text-slate-400">{item.description}</p>
-              <p className="mt-5 text-2xl font-semibold tracking-tight text-[#E5C158]">{formatPrice(item.usdPrice)}</p>
-              <p className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">
-                {selectedCategory.billingPeriod === 'monthly'
-                  ? 'Indicative monthly estimate'
-                  : selectedCategory.billingPeriod === 'unspecified'
-                    ? 'Indicative reference estimate'
-                    : 'Indicative starting estimate'}
-              </p>
-              <p className="mt-2 text-xs text-slate-500">
-                USD estimate: US${item.usdPrice.toLocaleString('en-US')}
-                {selectedCategory.billingPeriod === 'monthly' ? ' / month' : ''}
-                {selectedCategory.billingPeriod === 'unspecified' ? ' · period not stated' : ''}
-              </p>
-
-              <ul className="mt-5 space-y-2.5 border-t border-white/[0.08] pt-5">
-                {item.includes.slice(0, 4).map((feature) => (
-                  <li key={feature} className="flex gap-2.5 text-xs text-slate-300">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#D4AF37]" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              <details className="group mt-4 border-t border-white/[0.08] pt-4">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-xs font-semibold text-[#E5C158] [&::-webkit-details-marker]:hidden">
-                  <span>Full package breakdown ({item.includes.length} items)</span>
-                  <ChevronDown className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180" />
-                </summary>
-                <ul className="mt-4 space-y-2.5">
-                  {item.includes.slice(4).map((feature) => (
-                    <li key={feature} className="flex gap-2.5 text-xs leading-5 text-slate-300">
-                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#D4AF37]" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </details>
-
-              <button
-                type="button"
-                onClick={() => onAskAboutPackage(selectedCategory.serviceName, {
-                  name: item.name,
-                  estimate: formatPrice(item.usdPrice),
-                  referencePrice: `US$${item.usdPrice.toLocaleString('en-US')}${selectedCategory.billingPeriod === 'monthly' ? ' / month' : ''}`,
-                  market: selectedMarket.country,
-                })}
-                className="mt-6 inline-flex items-center justify-between border-t border-white/[0.08] pt-4 text-xs font-semibold text-[#E5C158] transition hover:text-[#F6EDC8]"
-              >
-                Ask about this package
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </motion.article>
+        <div ref={grid} className="mt-8 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {selectedCategory.packages.map((item) => (
+            <PackageCard
+              key={`${selectedCategory.id}-${item.name}`}
+              item={item}
+              category={selectedCategory}
+              price={formatPrice(item.usdPrice)}
+              onAsk={() => onAskAboutPackage(selectedCategory.serviceName, {
+                name: item.name,
+                estimate: formatPrice(item.usdPrice),
+                referencePrice: `US$${item.usdPrice.toLocaleString('en-US')}${selectedCategory.billingPeriod === 'monthly' ? ' / month' : ''}`,
+                market: selectedMarket.country,
+              })}
+            />
           ))}
         </div>
 
-        <p className="mt-6 text-center text-[11px] leading-5 text-slate-500">
+        <p className="mt-8 text-sm leading-6 text-muted">
           All prices shown are estimates, not fixed quotes. Local-currency conversions are rounded.
           {selectedCategory.billingPeriod === 'monthly' && ' SEO and Local SEO plans are monthly.'}
           {selectedCategory.billingPeriod === 'unspecified' && ' The AI Search billing period is not stated.'}

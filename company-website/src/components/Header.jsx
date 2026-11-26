@@ -1,121 +1,151 @@
-import { useState } from 'react';
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowUpRight, Menu, X } from 'lucide-react';
+import Button from './Button';
+import Wordmark from './Wordmark';
+import { gsap, prefersReducedMotion, useGSAP } from '../lib/gsap';
 
 const navigation = [
   { name: 'About', href: '/about' },
   { name: 'Team', href: '/team' },
   { name: 'Services', href: '/projects' },
+  { name: 'Portfolio', href: '/portfolio' },
   { name: 'Opportunities', href: '/opportunities' },
   { name: 'Pricing', href: '/#pricing' },
 ];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
   const location = useLocation();
+  const menu = useRef(null);
+  const toggle = useRef(null);
+
+  const isActive = (href) => (href === '/#pricing'
+    ? location.pathname === '/' && location.hash === '#pricing'
+    : location.pathname === href);
+
+  // Tuck the bar away while reading downward; bring it back on any upward scroll.
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const handleScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - lastY) < 6) return;
+      setIsHidden(y > lastY && y > 240);
+      lastY = y;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!isMenuOpen) return undefined;
+
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false);
+        toggle.current.focus();
+      }
+    };
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const handleResize = () => desktop.matches && setIsMenuOpen(false);
+
+    document.addEventListener('keydown', handleKeyDown);
+    desktop.addEventListener('change', handleResize);
+    return () => {
+      document.documentElement.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      desktop.removeEventListener('change', handleResize);
+    };
+  }, [isMenuOpen]);
+
+  useGSAP(() => {
+    const speed = prefersReducedMotion() ? 0 : 1;
+
+    if (isMenuOpen) {
+      gsap.timeline()
+        .set(menu.current, { visibility: 'visible' })
+        .fromTo(menu.current, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.65 * speed, ease: 'curtain' })
+        .fromTo('[data-menu-item]', { yPercent: 110 }, { yPercent: 0, duration: 0.7 * speed, ease: 'soft', stagger: 0.05 * speed }, 0.25 * speed);
+    } else {
+      gsap.to(menu.current, {
+        clipPath: 'inset(0% 0% 100% 0%)',
+        duration: 0.45 * speed,
+        ease: 'curtain',
+        onComplete: () => gsap.set(menu.current, { visibility: 'hidden' }),
+      });
+    }
+  }, { dependencies: [isMenuOpen], scope: menu });
 
   const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <motion.header
-      initial={{ y: -16, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.35, ease: 'easeOut' }}
-      className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.07] bg-[#080B11]/90 backdrop-blur-xl"
-    >
-      <div className="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link to="/" onClick={closeMenu} className="group flex items-center gap-3" aria-label="FutureTech Africa home">
-          <span className="grid h-10 w-10 place-items-center rounded-lg border border-[#D4AF37]/35 bg-[#D4AF37]/[0.08] font-display text-sm font-bold tracking-tight text-[#E5C158] transition group-hover:border-[#D4AF37]/70">
-            FT
-          </span>
-          <span className="leading-tight">
-            <span className="block text-[15px] font-semibold tracking-wide text-slate-100">FutureTech</span>
-            <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.24em] text-slate-500">Africa</span>
-          </span>
-        </Link>
+    <>
+      <header
+        onFocus={() => setIsHidden(false)}
+        className={`fixed inset-x-0 top-0 z-50 border-b border-line bg-paper transition-transform duration-500 ease-soft ${
+          isHidden && !isMenuOpen ? '-translate-y-full' : 'translate-y-0'
+        }`}
+      >
+        <div className="shell flex h-[71px] items-center justify-between gap-6">
+          <Wordmark onClick={closeMenu} />
 
-        <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
-          {navigation.map((item) => {
-            const isActive = item.href.startsWith('/#')
-              ? location.pathname === '/'
-              : location.pathname === item.href;
-
-            return (
+          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
+            {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`relative py-2 text-sm transition-colors ${
-                  isActive ? 'text-[#E5C158]' : 'text-slate-400 hover:text-slate-100'
-                }`}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                className={`text-link text-[15px] ${isActive(item.href) ? '!bg-[length:100%_1px]' : ''}`}
               >
                 {item.name}
-                {isActive && (
-                  <motion.span
-                    layoutId="active-nav"
-                    className="absolute inset-x-0 -bottom-[1px] h-px bg-[#D4AF37]"
-                    transition={{ duration: 0.22 }}
-                  />
-                )}
               </Link>
-            );
-          })}
-        </nav>
+            ))}
+          </nav>
 
-        <div className="hidden lg:block">
-          <Link
-            to="/contact"
-            className="inline-flex items-center gap-2 rounded-md border border-[#D4AF37]/55 px-4 py-2.5 text-sm font-semibold text-[#E5C158] transition hover:border-[#E5C158] hover:bg-[#D4AF37]/[0.08]"
+          <Button to="/contact" size="md" arrow={false} className="hidden lg:inline-flex">
+            Get in touch
+          </Button>
+
+          <button
+            ref={toggle}
+            type="button"
+            className="flex h-11 items-center gap-3 rounded-full bg-mist pl-5 pr-4 text-sm font-medium lg:hidden"
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setIsMenuOpen((open) => !open)}
           >
-            Start a project
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
+            {isMenuOpen ? 'Close' : 'Menu'}
+            <span aria-hidden="true" className="relative block h-2.5 w-4">
+              <span className={`absolute left-0 h-px w-4 bg-ink transition-all duration-500 ease-soft ${isMenuOpen ? 'top-[5px] rotate-45' : 'top-0.5'}`} />
+              <span className={`absolute left-0 h-px w-4 bg-ink transition-all duration-500 ease-soft ${isMenuOpen ? 'top-[5px] -rotate-45' : 'top-2'}`} />
+            </span>
+          </button>
         </div>
+      </header>
 
-        <button
-          type="button"
-          className="rounded-md border border-white/10 p-2 text-slate-300 transition hover:border-white/25 hover:text-white lg:hidden"
-          aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen((open) => !open)}
-        >
-          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-
-      <motion.nav
-        initial={false}
-        animate={{ height: isMenuOpen ? 'auto' : 0, opacity: isMenuOpen ? 1 : 0 }}
-        transition={{ duration: 0.22 }}
-        className="overflow-hidden border-t border-white/[0.07] bg-[#080B11] lg:hidden"
+      <nav
+        ref={menu}
+        id="mobile-menu"
         aria-label="Mobile navigation"
-        aria-hidden={!isMenuOpen}
+        className="invisible fixed inset-x-0 bottom-0 top-[72px] z-40 flex flex-col justify-between overflow-y-auto bg-paper px-5 pb-8 pt-4 sm:px-8 lg:hidden"
       >
-        <div className="mx-auto max-w-7xl space-y-1 px-5 py-4 sm:px-8">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              onClick={closeMenu}
-              tabIndex={isMenuOpen ? 0 : -1}
-              className="block rounded-md px-3 py-3 text-sm text-slate-300 transition hover:bg-white/[0.04] hover:text-[#E5C158]"
-            >
-              {item.name}
-            </Link>
+        <ul>
+          {[...navigation, { name: 'Contact', href: '/contact' }].map((item) => (
+            <li key={item.name} className="border-b border-line">
+              <Link to={item.href} onClick={closeMenu} className="block overflow-hidden py-4">
+                <span data-menu-item className="block text-title font-medium">{item.name}</span>
+              </Link>
+            </li>
           ))}
-          <Link
-            to="/contact"
-            onClick={closeMenu}
-            tabIndex={isMenuOpen ? 0 : -1}
-            className="mt-2 inline-flex items-center gap-2 rounded-md bg-[#D4AF37] px-4 py-3 text-sm font-semibold text-[#11140F]"
-          >
-            Start a project
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </motion.nav>
-    </motion.header>
+        </ul>
+        <Button to="/contact" size="lg" onClick={closeMenu} className="mt-8 self-start">
+          Start a project
+        </Button>
+      </nav>
+    </>
   );
 };
 

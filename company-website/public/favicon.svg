@@ -1,9 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- FutureTech mark, traced from the company logo supplied on 2026-11-27. -->
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    <radialGradient id="ground" cx="50%" cy="46%" r="72%">
+      <stop offset="0" stop-color="#1d1470"/>
+      <stop offset="0.55" stop-color="#130b45"/>
+      <stop offset="1" stop-color="#0a0624"/>
+    </radialGradient>
+    <linearGradient id="top" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3597ff"/>
+      <stop offset="0.45" stop-color="#58bdff"/>
+      <stop offset="0.75" stop-color="#b2deff"/>
+      <stop offset="1" stop-color="#e3f1ff"/>
+    </linearGradient>
+    <linearGradient id="middle" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3092ff"/>
+      <stop offset="0.45" stop-color="#58adff"/>
+      <stop offset="0.75" stop-color="#bce0ff"/>
+      <stop offset="1" stop-color="#deecff"/>
+    </linearGradient>
+    <linearGradient id="stem" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.5" stop-color="#c2e4ff"/>
+      <stop offset="1" stop-color="#4fb4ff"/>
+    </linearGradient>
+    <linearGradient id="flag" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#56a2ff"/>
+      <stop offset="1" stop-color="#3a64f6"/>
+    </linearGradient>
+    <linearGradient id="blade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6f7ff"/>
+      <stop offset="0.5" stop-color="#9cc4ff"/>
+      <stop offset="1" stop-color="#378aff"/>
     </linearGradient>
   </defs>
-  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="url(#grad)" fill="url(#grad)"/>
+  <rect width="512" height="512" rx="112" fill="url(#ground)"/>
+  <g transform="translate(21.68 100.4) scale(0.27)">
+    <path fill="url(#top)" d="M590 69L1335 66L1058 280Q1025 305 985 305L350 299L566 85Q578 71 590 69Z"/>
+    <path fill="url(#middle)" d="M300 413L975 411L902 591Q885 628 848 630L68 632L275 427Q287 414 300 413Z"/>
+    <path fill="url(#stem)" d="M379 630L610 629V880Q610 907 590 922L378 1087Z"/>
+    <path fill="url(#flag)" d="M1440 72L1668 70L1432 298Q1415 315 1403 325H1136Q1148 308 1165 295L1415 85Q1427 73 1440 72Z"/>
+    <path fill="url(#blade)" d="M1136 325H1403Q1390 345 1380 365L1262 615Q1250 637 1228 650L876 873L1118 360Q1126 340 1136 325Z"/>
+  </g>
 </svg>

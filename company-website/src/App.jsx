@@ -1,67 +1,58 @@
-import { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
-// eslint-disable-next-line no-unused-vars
-import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import PageTransition from './components/PageTransition';
 import Home from './pages/Home';
 import About from './pages/About';
 import Opportunities from './pages/Opportunities';
+import Portfolio from './pages/Portfolio';
 import Projects from './pages/Projects';
 import Contact from './pages/Contact';
 import Team from './pages/Team';
+import { loadTechShop } from './shop/load';
+import TechShopRoute from './shop/TechShopRoute';
 
-function ScrollToTop() {
-  const { pathname } = useLocation();
+// Sample websites bring their own header and footer.
+const isSample = (location) => location.pathname.startsWith('/work/');
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-
-  return null;
-}
-
-function AnimatedRoutes() {
-  const location = useLocation();
-
-  return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={location.pathname}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.26, ease: 'easeOut' }}
-      >
-        <Routes location={location}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/opportunities" element={<Opportunities />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/team" element={<Team />} />
-        </Routes>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
+const preloadPage = (location) => (isSample(location) ? loadTechShop() : undefined);
 
 function App() {
   return (
-    <MotionConfig reducedMotion="user">
-      <Router>
-        <ScrollToTop />
-        <div className="min-h-screen bg-[#080B11] font-display text-slate-200">
-          <Header />
-          <main className="pt-[76px]">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-        </div>
-        <Analytics />
-      </Router>
-    </MotionConfig>
+    <Router>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[90] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-paper"
+      >
+        Skip to content
+      </a>
+      <div className="min-h-screen overflow-x-clip bg-paper text-ink">
+        <PageTransition header={(location) => !isSample(location) && <Header />} preload={preloadPage}>
+          {(location) => (isSample(location) ? (
+            <Routes location={location}>
+              <Route path="/work/tech-shop" element={<TechShopRoute />} />
+            </Routes>
+          ) : (
+            <>
+              <main id="main" tabIndex={-1} className="pt-[72px]">
+                <Routes location={location}>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/opportunities" element={<Opportunities />} />
+                  <Route path="/portfolio" element={<Portfolio />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/team" element={<Team />} />
+                </Routes>
+              </main>
+              <Footer />
+            </>
+          ))}
+        </PageTransition>
+      </div>
+      <Analytics />
+    </Router>
   );
 }
 

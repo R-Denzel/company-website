@@ -1,45 +1,55 @@
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
+const variants = {
+  primary: { body: 'bg-ink text-paper hover:bg-violet-deep', dot: 'bg-gradient-to-br from-violet-soft to-coral-soft text-ink' },
+  secondary: { body: 'bg-mist text-ink hover:bg-line', dot: 'bg-violet text-paper' },
+  light: { body: 'bg-paper text-ink hover:bg-mist', dot: 'bg-violet text-paper' },
+  ghost: { body: 'bg-transparent text-ink hover:bg-mist', dot: 'bg-mist text-ink' },
+  glass: { body: 'bg-paper/15 text-paper hover:bg-paper/25', dot: 'bg-paper text-ink' },
+};
+
+const sizes = {
+  md: { body: 'h-11 text-sm', text: 'px-5', arrow: 'pl-5 pr-1.5', dot: 'h-8 w-8' },
+  lg: { body: 'h-14 text-base', text: 'px-7', arrow: 'pl-7 pr-2', dot: 'h-10 w-10' },
+};
+
+/** Pill button. Renders a router link with `to`, an external link with `href`, otherwise a button. */
 const Button = ({
   children,
   variant = 'primary',
   size = 'md',
+  arrow = true,
+  icon = ArrowRight,
   className = '',
-  onClick,
-  disabled = false,
+  to,
+  href,
   type = 'button',
   ...props
 }) => {
-  const variants = {
-    primary: 'border border-[#D4AF37] bg-[#D4AF37] text-[#11140F] hover:border-[#E5C158] hover:bg-[#E5C158] focus-visible:ring-[#D4AF37]',
-    secondary: 'border border-white/10 bg-white/[0.05] text-slate-100 hover:border-white/25 hover:bg-white/[0.08] focus-visible:ring-white/30',
-    outline: 'border border-[#D4AF37]/60 bg-transparent text-[#E5C158] hover:border-[#E5C158] hover:bg-[#D4AF37]/[0.08] focus-visible:ring-[#D4AF37]',
-    ghost: 'border border-transparent bg-transparent text-slate-400 hover:bg-white/[0.04] hover:text-slate-100 focus-visible:ring-white/30',
-    neon: 'border border-[#D4AF37] bg-[#D4AF37] text-[#11140F] hover:border-[#E5C158] hover:bg-[#E5C158] focus-visible:ring-[#D4AF37]',
-  };
+  const Icon = icon;
+  const tone = variants[variant];
+  const scale = sizes[size];
+  const classes = `group inline-flex shrink-0 items-center justify-center gap-4 whitespace-nowrap rounded-full font-medium transition-colors duration-300 ease-soft disabled:cursor-not-allowed disabled:opacity-40 ${tone.body} ${scale.body} ${arrow ? scale.arrow : scale.text} ${className}`;
 
-  const sizes = {
-    sm: 'px-3 py-2 text-sm',
-    md: 'px-4 py-2.5 text-sm',
-    lg: 'px-5 py-3 text-sm sm:text-base',
-    xl: 'px-7 py-4 text-base',
-  };
-
-  return (
-    <motion.button
-      type={type}
-      className={`inline-flex items-center justify-center rounded-md font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#080B11] disabled:cursor-not-allowed disabled:opacity-45 ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`}
-      onClick={onClick}
-      disabled={disabled}
-      whileHover={disabled ? undefined : { y: -1 }}
-      whileTap={disabled ? undefined : { scale: 0.99 }}
-      transition={{ duration: 0.16 }}
-      {...props}
-    >
-      {children}
-    </motion.button>
+  const content = (
+    <>
+      <span className="roll leading-6">
+        <span>{children}</span>
+        <span aria-hidden="true">{children}</span>
+      </span>
+      {arrow && (
+        <span aria-hidden="true" className={`grid place-items-center rounded-full ${tone.dot} ${scale.dot}`}>
+          <Icon className="h-4 w-4 transition-transform duration-500 ease-soft group-hover:rotate-[-45deg] group-disabled:rotate-0" />
+        </span>
+      )}
+    </>
   );
+
+  if (to) return <Link to={to} className={classes} {...props}>{content}</Link>;
+  if (href) return <a href={href} className={classes} target="_blank" rel="noopener noreferrer" {...props}>{content}</a>;
+
+  return <button type={type} className={classes} {...props}>{content}</button>;
 };
 
 export default Button;

@@ -1,102 +1,49 @@
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Button from '../components/Button';
+import CallToAction from '../components/CallToAction';
+import PageIntro from '../components/PageIntro';
+import usePageMotion from '../hooks/usePageMotion';
+import { teamMembers } from '../data/team';
 
-const teamMembers = [
-  {
-    initials: 'DM',
-    name: 'Denzel Robert Male',
-    role: 'CEO & Founder',
-    bio: 'Visionary leader and developer in tech innovation.',
-  },
-  {
-    initials: 'JK',
-    name: 'Jeremy Kasule',
-    role: 'CTO',
-    bio: 'Tech architect passionate about scalable solutions.',
-  },
-  {
-    initials: 'HN',
-    name: 'Hindu Nalubega',
-    role: 'Head of Design',
-    bio: 'Creative director focused on user experience excellence.',
-  },
-  {
-    initials: 'BJ',
-    name: 'Birungi Jannie',
-    role: 'Lead Developer',
-    bio: 'Full-stack developer with expertise in modern frameworks.',
-  },
-];
+const Team = () => {
+  const motion = usePageMotion();
 
-const Team = () => (
-  <div className="bg-[#080B11]">
-    <section className="relative isolate overflow-hidden border-b border-white/[0.08]">
-      <div className="absolute inset-0 -z-10 bg-pattern opacity-30" />
-      <div className="absolute -right-36 top-0 -z-10 h-96 w-96 rounded-full bg-[#D4AF37]/[0.05] blur-[110px]" />
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-3xl"
-        >
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">Our people</p>
-          <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-slate-100 sm:text-6xl">Meet the team.</h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
-            Get to know the people and roles behind FutureTech Africa.
-          </p>
-        </motion.div>
-      </div>
-    </section>
+  return (
+    <div ref={motion}>
+      <PageIntro title="Meet the team.">
+        Get to know the people and roles behind FutureTech Africa.
+      </PageIntro>
 
-    <section className="py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <div className="mb-10 max-w-2xl">
-          <h2 className="text-2xl font-semibold text-slate-100 sm:text-3xl">Leadership & team</h2>
-          <p className="mt-3 text-sm leading-7 text-slate-400">
+      <section className="shell pb-20 sm:pb-32">
+        <div className="split mb-12">
+          <h2 data-split className="text-title font-medium">Leadership &amp; team</h2>
+          <p data-fade className="max-w-xl text-lead text-muted">
             The people responsible for guiding, designing, and building our digital work.
           </p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {teamMembers.map((member, index) => (
-            <motion.article
-              key={member.name}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.4, delay: index * 0.06 }}
-              className="rounded-xl border border-white/[0.08] bg-[#0D121B] p-6"
-            >
-              <div
-                aria-hidden="true"
-                className="grid h-32 place-items-center rounded-lg border border-white/[0.08] bg-gradient-to-br from-[#D4AF37]/[0.12] via-[#111722] to-[#0B0F17]"
-              >
-                <span className="font-display text-4xl font-semibold tracking-[0.14em] text-[#E5C158]">{member.initials}</span>
+        <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 xl:grid-cols-4">
+          {teamMembers.map((member) => (
+            <article key={member.name} className="group">
+              <div data-clip aria-hidden="true" className="relative grid aspect-[4/3] place-items-center sm:aspect-[4/5] overflow-hidden rounded-xl bg-mist">
+                <span className="absolute inset-0 origin-bottom scale-y-0 bg-gradient-to-t from-ink via-violet-deep to-violet transition-transform duration-700 ease-soft group-hover:scale-y-100" />
+                <span className="relative text-[clamp(4rem,7vw,6rem)] font-medium tracking-[-0.04em] transition-colors duration-500 group-hover:text-paper">
+                  {member.initials}
+                </span>
               </div>
-              <p className="mt-6 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#D4AF37]">{member.role}</p>
-              <h3 className="mt-2 text-lg font-semibold text-slate-100">{member.name}</h3>
-              <p className="mt-3 text-sm leading-6 text-slate-400">{member.bio}</p>
-            </motion.article>
+              <div data-fade>
+                <h3 className="mt-5 text-2xl font-medium tracking-[-0.025em]">{member.name}</h3>
+                <p className="mt-1 text-sm font-semibold text-violet-deep">{member.role}</p>
+                <p className="mt-3 text-base leading-7 text-muted">{member.bio}</p>
+              </div>
+            </article>
           ))}
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section className="border-t border-white/[0.08] bg-[#0B0F17] py-16 sm:py-20">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-slate-100 sm:text-3xl">Have a project in mind?</h2>
-          <p className="mt-2 text-sm text-slate-400">Start a conversation with our team.</p>
-        </div>
-        <Link to="/contact" className="inline-flex items-center gap-2 text-sm font-semibold text-[#E5C158] transition hover:gap-3">
-          Get in touch
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
-    </section>
-  </div>
-);
+      <CallToAction title="Have a project in mind?" text="Start a conversation with our team.">
+        <Button size="lg" variant="light" to="/contact">Get in touch</Button>
+      </CallToAction>
+    </div>
+  );
+};
 
 export default Team;

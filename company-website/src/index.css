@@ -1,110 +1,133 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    font-family: 'Plus Jakarta Sans', system-ui, Avenir, Helvetica, Arial, sans-serif;
-    color: #E2E8F0;
-    background: #080B11;
+    color: #140f2e;
+    background: #ffffff;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
-    font-optical-sizing: auto;
   }
 
-  * {
-    box-sizing: border-box;
+  html {
+    scrollbar-color: #b3a9dc #ffffff;
   }
 
   body {
     min-width: 320px;
-    min-height: 100vh;
     margin: 0;
-    background: #080B11;
+    font-family: 'Hanken Grotesk', system-ui, sans-serif;
   }
 
-  button,
-  input,
-  select,
-  textarea {
-    font: inherit;
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   ::selection {
-    color: #080B11;
-    background: #D4AF37;
+    color: #140f2e;
+    background: #ffc3b3;
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: #6440f5;
+  }
+
+  :focus-visible {
+    outline: 2px solid #6440f5;
+    outline-offset: 3px;
+  }
+
+  /* Dark regions swap the focus ring to soft coral so it stays visible. */
+  .on-ink :focus-visible {
+    outline-color: #ffc3b3;
+  }
+
+  main:focus {
+    outline: none;
   }
 }
 
-@layer utilities {
-  ::-webkit-scrollbar {
-    width: 8px;
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-[90rem] px-5 sm:px-8 lg:px-16;
   }
 
-  ::-webkit-scrollbar-track {
-    background: #080B11;
+  /* Two-column editorial split: heading side and content side. */
+  .split {
+    @apply grid gap-8 lg:grid-cols-2 lg:gap-16;
   }
 
-  ::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-    background: #334155;
+  .field {
+    @apply mt-2 block w-full rounded-none border-0 border-b border-line bg-transparent px-0 py-3 text-base text-ink outline-none transition-colors duration-300 placeholder:text-muted hover:border-muted focus:border-violet;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #64748B;
+  .field:focus-visible {
+    outline: none;
+    box-shadow: 0 1px 0 0 #6440f5;
   }
 
-  .line-clamp-3 {
-    display: -webkit-box;
-    overflow: hidden;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+  .text-link {
+    @apply inline-block bg-gradient-to-r from-current to-current bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-0.5 transition-[background-size] duration-500 ease-soft hover:bg-[length:100%_1px];
   }
 
-  .bg-pattern {
-    background-image: radial-gradient(rgba(226, 232, 240, 0.13) 1px, transparent 1px);
-    background-size: 30px 30px;
+  /* Button label that rolls upward on hover. */
+  .roll {
+    @apply relative block overflow-hidden;
   }
 
-  .about-hero-background {
-    animation: about-hero-drift 32s ease-in-out infinite;
-    transform-origin: center;
+  .roll > span {
+    @apply block transition-transform duration-500 ease-soft;
   }
 
-  @keyframes about-hero-drift {
-    0%,
-    100% {
-      transform: scale(1.02) translate3d(0, 0, 0);
-    }
-
-    50% {
-      transform: scale(1.09) translate3d(-12px, 0, 0);
-    }
+  .roll > span + span {
+    @apply absolute inset-0;
+    transform: translateY(105%);
   }
 
-  .glass {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(15, 23, 42, 0.68);
-    backdrop-filter: blur(18px);
+  .group:hover .roll > span:first-child,
+  .group:focus-visible .roll > span:first-child {
+    transform: translateY(-105%);
   }
+
+  .group:hover .roll > span + span,
+  .group:focus-visible .roll > span + span {
+    transform: translateY(0);
+  }
+
+  .group:disabled .roll > span:first-child {
+    transform: none;
+  }
+
+  .group:disabled .roll > span + span {
+    transform: translateY(105%);
+  }
+}
+
+/* Gives descenders room inside SplitText line masks. */
+.split-line-mask {
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about-hero-background {
-    animation: none !important;
-  }
-
   *,
   *::before,
   *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    /* `none`, not a tiny duration: a tiny one still delays every style change by a frame. */
+    transition: none !important;
   }
 }
