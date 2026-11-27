@@ -6,7 +6,7 @@ import { gsap, prefersReducedMotion, useGSAP } from '../lib/gsap';
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])';
 
 /** Side-sheet dialog with enter/exit motion, focus trap, scroll lock and Escape to close. */
-const Dialog = ({ open, onClose, labelledBy, closeLabel = 'Close', children }) => {
+const Dialog = ({ open, onClose, labelledBy, closeLabel = 'Close', closeClassName = 'bg-mist hover:bg-ink hover:text-paper', children }) => {
   const [isMounted, setIsMounted] = useState(open);
   const overlay = useRef(null);
   const panel = useRef(null);
@@ -94,7 +94,7 @@ const Dialog = ({ open, onClose, labelledBy, closeLabel = 'Close', children }) =
           type="button"
           onClick={onClose}
           aria-label={closeLabel}
-          className="group absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full bg-mist transition-colors hover:bg-ink hover:text-paper sm:right-8"
+          className={`group absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full transition-colors sm:right-8 ${closeClassName}`}
         >
           <X className="h-5 w-5 transition-transform duration-500 ease-soft group-hover:rotate-90" />
         </button>

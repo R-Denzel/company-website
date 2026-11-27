@@ -1,13 +1,14 @@
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { loadTechShop } from '../shop/load';
+import { sampleFor } from '../samples/registry';
 
 /** Portfolio entry. Samples open inside this site; live projects open in a new tab. */
 const ProjectCard = ({ project, wide = false }) => {
   const Wrapper = project.isSample ? Link : 'a';
-  // Hovering or focusing the sample fetches it early, so it opens without a wait.
+  // Hovering or focusing a sample fetches it early, so it opens without a wait.
+  const fetchEarly = () => sampleFor(project.url)?.preload();
   const linkProps = project.isSample
-    ? { to: project.url, onPointerEnter: loadTechShop, onFocus: loadTechShop }
+    ? { to: project.url, onPointerEnter: fetchEarly, onFocus: fetchEarly }
     : { href: project.url, target: '_blank', rel: 'noopener noreferrer' };
 
   return (

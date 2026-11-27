@@ -4,17 +4,6 @@ import { whenReleased } from '../lib/curtainHold';
 import { nextFrame, whenSmooth } from '../lib/frames';
 import { gsap, prefersReducedMotion, ScrollTrigger } from '../lib/gsap';
 
-const pageNames = {
-  '/': 'Home',
-  '/about': 'About',
-  '/team': 'Team',
-  '/projects': 'Services',
-  '/portfolio': 'Portfolio',
-  '/work/tech-shop': 'Voltway',
-  '/opportunities': 'Opportunities',
-  '/contact': 'Contact',
-};
-
 const HEADER_OFFSET = 72;
 
 const scrollForLocation = ({ hash }, smooth) => {
@@ -25,18 +14,27 @@ const scrollForLocation = ({ hash }, smooth) => {
 
 /**
  * Covers the outgoing page with a curtain, swaps routes underneath, and lifts the
- * curtain only once the new page has finished its heavy setup. `preload` may
- * return a promise for code the next page needs.
+ * curtain only once the new page has finished its heavy setup.
+ *
+ * `curtain(to, from)` describes what to show: { mark, label, className, isQuick }.
+ * A quick curtain fades; otherwise it slides. `preload(to)` may return a promise
+ * for whatever the next page needs.
  */
-const PageTransition = ({ header, preload, children }) => {
+const PageTransition = ({ header, curtain, preload, children }) => {
   const location = useLocation();
   const [shown, setShown] = useState(location);
-  const curtain = useRef(null);
+  const [look, setLook] = useState(() => curtain(location, location));
+  const cover = useRef(null);
   const label = useRef(null);
   const previous = useRef(location);
-  const preloadRef = useRef(preload);
+  const latest = useRef({ curtain, preload });
+  const isQuick = useRef(false);
   // Counts navigations, so a slow page never lifts the curtain over a newer one.
   const journey = useRef(0);
+
+  useEffect(() => {
+    latest.current = { curtain, preload };
+  });
 
   useEffect(() => {
     if (location.key === shown.key) return undefined;
@@ -44,31 +42,41 @@ const PageTransition = ({ header, preload, children }) => {
 
     if (location.pathname === shown.pathname || prefersReducedMotion()) {
       setShown(location);
-      gsap.set(curtain.current, { autoAlpha: 0 });
+      gsap.set(cover.current, { autoAlpha: 0 });
       return undefined;
     }
 
     let isCancelled = false;
     // Fetch while the curtain is moving. A failed load surfaces when the page renders.
-    const ready = Promise.resolve(preloadRef.current?.(location)).catch(() => {});
+    const ready = Promise.resolve(latest.current.preload?.(location)).catch(() => {});
 
-    label.current.textContent = pageNames[location.pathname] || '';
+    const next = latest.current.curtain(location, shown);
+    setLook(next);
 
-    // Stop a lift still in progress. Done up front: `overwrite` on the tween
-    // below would also kill the step that makes the curtain visible.
-    gsap.killTweensOf(curtain.current);
-    const isHidden = gsap.getProperty(curtain.current, 'visibility') === 'hidden';
-    if (isHidden) gsap.set(curtain.current, { yPercent: 100 });
+    // Stop a lift still in progress. Done up front: `overwrite` on a tween below
+    // would also kill the step that makes the curtain visible.
+    gsap.killTweensOf(cover.current);
+    const isHidden = gsap.getProperty(cover.current, 'visibility') === 'hidden';
+    isQuick.current = Boolean(next.isQuick) && isHidden;
 
     const timeline = gsap.timeline({
       onComplete: async () => {
         await ready;
         if (!isCancelled) setShown(location);
       },
-    })
-      .set(curtain.current, { autoAlpha: 1 })
-      .to(curtain.current, { yPercent: 0, duration: 0.42, ease: 'power3.inOut' })
-      .fromTo(label.current, { yPercent: 110 }, { yPercent: 0, duration: 0.3, ease: 'power2.out' }, 0.14);
+    });
+
+    if (isQuick.current) {
+      timeline
+        .set(cover.current, { yPercent: 0, autoAlpha: 0 })
+        .to(cover.current, { autoAlpha: 1, duration: 0.25, ease: 'power1.out' });
+    } else {
+      if (isHidden) gsap.set(cover.current, { yPercent: 100 });
+      timeline
+        .set(cover.current, { autoAlpha: 1 })
+        .to(cover.current, { yPercent: 0, duration: 0.42, ease: 'power3.inOut' })
+        .fromTo(label.current, { yPercent: 110 }, { yPercent: 0, duration: 0.3, ease: 'power2.out' }, 0.14);
+    }
 
     return () => {
       isCancelled = true;
@@ -81,11 +89,13 @@ const PageTransition = ({ header, preload, children }) => {
     if (from.key === shown.key) return undefined;
     previous.current = shown;
 
-    const samePage = from.pathname === shown.pathname;
-    scrollForLocation(shown, samePage);
+    if (from.pathname === shown.pathname) {
+      // A change of filters in the address should leave the reader where they are.
+      if (shown.hash || shown.search === from.search) scrollForLocation(shown, true);
+      return undefined;
+    }
 
-    if (samePage) return undefined;
-
+    scrollForLocation(shown, false);
     document.getElementById('main')?.focus({ preventScroll: true });
 
     const mine = journey.current;
@@ -101,12 +111,12 @@ const PageTransition = ({ header, preload, children }) => {
       await whenSmooth();
       if (isStale()) return;
 
-      gsap.to(curtain.current, {
-        yPercent: -100,
-        duration: 0.55,
-        ease: 'power3.inOut',
+      gsap.to(cover.current, {
+        ...(isQuick.current
+          ? { autoAlpha: 0, duration: 0.35, ease: 'power1.inOut' }
+          : { yPercent: -100, duration: 0.55, ease: 'power3.inOut' }),
         overwrite: true,
-        onComplete: () => gsap.set(curtain.current, { autoAlpha: 0 }),
+        onComplete: () => gsap.set(cover.current, { autoAlpha: 0 }),
       });
     };
     reveal();
@@ -126,13 +136,14 @@ const PageTransition = ({ header, preload, children }) => {
       {header?.(shown)}
       <div key={shown.pathname}>{children(shown)}</div>
       <div
-        ref={curtain}
+        ref={cover}
+        data-curtain
         aria-hidden="true"
-        className="pointer-events-none invisible fixed inset-0 z-[60] flex flex-col items-center justify-center gap-5 bg-[#0e0933] text-paper opacity-0 will-change-transform"
+        className={`pointer-events-none invisible fixed inset-0 z-[85] flex flex-col items-center justify-center gap-5 opacity-0 will-change-transform ${look.className}`}
       >
-        <img src="/favicon.svg" alt="" width="96" height="96" className="h-24 w-24" />
+        <img src={look.mark} alt="" width="96" height="96" className="h-24 w-24" />
         <span className="block overflow-hidden pb-2">
-          <span ref={label} className="block text-row font-medium" />
+          <span ref={label} className="block text-row font-medium">{look.label}</span>
         </span>
       </div>
     </>

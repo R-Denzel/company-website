@@ -27,9 +27,19 @@ export default {
         },
         gold: '#D4AF37',
         danger: '#A5261B',
+        // Karafuu sample shop.
+        k: {
+          night: '#0B0807',
+          ivory: '#F7F2EA',
+          gold: '#B89255',
+          bronze: '#856531',
+          line: '#E8DFD0',
+          smoke: '#6B6259',
+        },
       },
       fontFamily: {
         sans: ['Hanken Grotesk', 'system-ui', 'sans-serif'],
+        parfum: ['Jost', 'Century Gothic', 'sans-serif'],
       },
       fontSize: {
         statement: ['clamp(2.25rem, 4.6vw, 4.25rem)', { lineHeight: '1.04', letterSpacing: '-0.035em' }],

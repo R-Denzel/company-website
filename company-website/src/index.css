@@ -53,6 +53,11 @@
     outline-color: #ffc3b3;
   }
 
+  /* The Karafuu sample shop has its own gold focus ring. */
+  .karafuu :focus-visible {
+    outline-color: #b89255;
+  }
+
   main:focus {
     outline: none;
   }

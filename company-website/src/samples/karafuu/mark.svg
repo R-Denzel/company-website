@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#b89255" stroke-width="1.6">
+  <!-- Eight petals around a bud: a stylised clove flower. -->
+  <g>
+    <path id="p" d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z"/>
+    <path d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z" transform="rotate(45 32 32)"/>
+    <path d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z" transform="rotate(90 32 32)"/>
+    <path d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z" transform="rotate(135 32 32)"/>
+    <path d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z" transform="rotate(180 32 32)"/>
+    <path d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z" transform="rotate(225 32 32)"/>
+    <path d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z" transform="rotate(270 32 32)"/>
+    <path d="M32 6c5 6 5 12 0 18-5-6-5-12 0-18Z" transform="rotate(315 32 32)"/>
+  </g>
+  <circle cx="32" cy="32" r="4.5" fill="#b89255" stroke="none"/>
+</svg>

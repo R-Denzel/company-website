@@ -12,7 +12,7 @@ import WebsitePackages from '../components/WebsitePackages';
 import usePageMotion from '../hooks/usePageMotion';
 import useServiceSelector from '../hooks/useServiceSelector';
 import { photos } from '../data/photos';
-import { featuredProjects, sampleProject } from '../data/projects';
+import { featuredProjects, sampleProjects } from '../data/projects';
 import { teamMembers } from '../data/team';
 
 const workflow = [
@@ -100,8 +100,8 @@ const Home = () => {
           </p>
         </div>
         <div className="mt-14 grid gap-x-6 gap-y-14 md:grid-cols-2">
-          {[...otherProjects, sampleProject].map((project) => (
-            <ProjectCard key={project.name} project={project} wide={project === sampleProject} />
+          {[...otherProjects, ...sampleProjects].map((project) => (
+            <ProjectCard key={project.name} project={project} />
           ))}
         </div>
         <div data-fade className="mt-12">

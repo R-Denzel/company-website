@@ -3,7 +3,7 @@ import CallToAction from '../components/CallToAction';
 import PageIntro from '../components/PageIntro';
 import ProjectCard from '../components/ProjectCard';
 import usePageMotion from '../hooks/usePageMotion';
-import { featuredProjects, sampleProject } from '../data/projects';
+import { featuredProjects, sampleProjects } from '../data/projects';
 
 const Portfolio = () => {
   const motion = usePageMotion();
@@ -11,18 +11,20 @@ const Portfolio = () => {
   return (
     <div ref={motion}>
       <PageIntro title="Work you can open and try.">
-        Live projects we’ve worked on, and a sample website that shows what we can build.
+        Live projects we’ve worked on, and sample websites that show what we can build.
       </PageIntro>
 
       <section className="shell py-16 sm:py-24" aria-labelledby="sample-heading">
         <div className="split mb-10">
-          <h2 id="sample-heading" data-split className="text-title font-medium">Sample website</h2>
+          <h2 id="sample-heading" data-split className="text-title font-medium">Sample websites</h2>
           <p data-fade className="max-w-xl text-lead text-muted">
-            A demonstration build for a phone and laptop shop. It is not a client project.
+            Demonstration shops for a perfume house and a phone and laptop seller. They are not client projects.
           </p>
         </div>
-        <div className="grid md:grid-cols-2">
-          <ProjectCard project={sampleProject} wide />
+        <div className="grid gap-x-6 gap-y-14 md:grid-cols-2">
+          {sampleProjects.map((project) => (
+            <ProjectCard key={project.name} project={project} />
+          ))}
         </div>
       </section>
 

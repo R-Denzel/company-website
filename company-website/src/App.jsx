@@ -10,13 +10,29 @@ import Portfolio from './pages/Portfolio';
 import Projects from './pages/Projects';
 import Contact from './pages/Contact';
 import Team from './pages/Team';
-import { loadTechShop } from './shop/load';
-import TechShopRoute from './shop/TechShopRoute';
+import { sampleFor, samples } from './samples/registry';
 
-// Sample websites bring their own header and footer.
-const isSample = (location) => location.pathname.startsWith('/work/');
+const pageNames = {
+  '/': 'Home',
+  '/about': 'About',
+  '/team': 'Team',
+  '/projects': 'Services',
+  '/portfolio': 'Portfolio',
+  '/opportunities': 'Opportunities',
+  '/contact': 'Contact',
+};
 
-const preloadPage = (location) => (isSample(location) ? loadTechShop() : undefined);
+/** What the transition curtain shows on the way to `to`. */
+const curtainFor = (to, from) => {
+  const sample = sampleFor(to.pathname);
+  if (!sample) {
+    return { mark: '/favicon.svg', label: pageNames[to.pathname] || '', className: 'bg-[#0e0933] text-paper' };
+  }
+  // Moving around inside one shop gets a quick fade instead of the full curtain.
+  return { ...sample.curtain, label: sample.name, isQuick: sampleFor(from.pathname) === sample };
+};
+
+const preloadPage = (location) => sampleFor(location.pathname)?.preload(location);
 
 function App() {
   return (
@@ -28,10 +44,17 @@ function App() {
         Skip to content
       </a>
       <div className="min-h-screen overflow-x-clip bg-paper text-ink">
-        <PageTransition header={(location) => !isSample(location) && <Header />} preload={preloadPage}>
-          {(location) => (isSample(location) ? (
+        {/* Sample websites bring their own header and footer. */}
+        <PageTransition
+          header={(location) => !sampleFor(location.pathname) && <Header />}
+          curtain={curtainFor}
+          preload={preloadPage}
+        >
+          {(location) => (sampleFor(location.pathname) ? (
             <Routes location={location}>
-              <Route path="/work/tech-shop" element={<TechShopRoute />} />
+              {samples.map((sample) => (
+                <Route key={sample.base} path={`${sample.base}/*`} element={<sample.Page />} />
+              ))}
             </Routes>
           ) : (
             <>
