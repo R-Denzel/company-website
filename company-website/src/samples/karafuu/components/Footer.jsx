@@ -10,7 +10,7 @@ const columns = [
   },
   {
     title: 'This sample',
-    links: [{ name: 'Back to the portfolio', to: '/portfolio' }, { name: 'Talk to FutureTech', to: '/contact' }],
+    links: [{ name: 'Back to the portfolio', to: '/work' }, { name: 'Talk to FutureTech', to: '/contact' }],
   },
 ];
 

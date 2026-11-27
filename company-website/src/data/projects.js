@@ -28,6 +28,7 @@ export const sampleProjects = [
 export const featuredProjects = [
   {
     name: 'My Duka POS',
+    status: 'Beta',
     category: 'Point of sale & inventory',
     description: 'A mobile-first POS and inventory management system for small businesses.',
     url: 'https://myduka-pos-hruz.onrender.com/',
@@ -36,14 +37,16 @@ export const featuredProjects = [
   },
   {
     name: 'Payro',
-    category: 'Digital payments',
-    description: 'A payment project with a simple promise: “Split smart · pay easy.”',
+    status: 'Beta',
+    category: 'Shared expenses',
+    description: 'A product for splitting shared bills, with a simple promise: “Split smart · pay easy.”',
     url: 'https://www.payro.co.ke',
     image: payro,
     alt: 'Payro welcome screen reading “Split expenses effortlessly”',
   },
   {
     name: 'CheckinHQ',
+    status: 'Beta',
     category: 'Booking management',
     description: 'Simple booking management for businesses.',
     url: 'https://checkinhq.vercel.app/',

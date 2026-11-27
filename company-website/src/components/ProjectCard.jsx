@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import StatusBadge from './StatusBadge';
 import { sampleFor } from '../samples/registry';
 
 /** Portfolio entry. Samples open inside this site; live projects open in a new tab. */
@@ -25,10 +26,13 @@ const ProjectCard = ({ project, wide = false }) => {
           <ArrowUpRight className="h-5 w-5 transition-transform duration-500 ease-soft group-hover:rotate-45" />
         </span>
       </div>
-      <h3 className="mt-5 text-row font-medium">{project.name}</h3>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <h3 className="text-row font-medium">{project.name}</h3>
+        {project.status && <StatusBadge status={project.status} />}
+      </div>
       <p className="mt-1 text-sm font-semibold text-violet-deep">{project.category}</p>
       <p className="mt-3 max-w-md text-base leading-7 text-muted">{project.description}</p>
-      <span className="sr-only">{project.isSample ? 'Open the sample website' : 'Open live demo in a new tab'}</span>
+      <span className="sr-only">{project.isSample ? 'Open the sample website' : 'Open the beta in a new tab'}</span>
     </Wrapper>
   );
 };

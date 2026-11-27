@@ -7,6 +7,7 @@ import Dialog from '../components/Dialog';
 import PageIntro from '../components/PageIntro';
 import Photo from '../components/Photo';
 import usePageMotion from '../hooks/usePageMotion';
+import useSeo from '../hooks/useSeo';
 import { photos } from '../data/photos';
 import { sendProposalEmail } from '../utils/emailService';
 
@@ -32,6 +33,7 @@ const Opportunities = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const motion = usePageMotion();
+  useSeo('Opportunities', 'Send FutureTech Africa a partnership, collaboration or internship enquiry.');
 
   const handleSubmit = async (event) => {
     event.preventDefault();

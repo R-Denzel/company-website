@@ -2,10 +2,12 @@ import Button from '../components/Button';
 import CallToAction from '../components/CallToAction';
 import PageIntro from '../components/PageIntro';
 import usePageMotion from '../hooks/usePageMotion';
+import useSeo from '../hooks/useSeo';
 import { teamMembers } from '../data/team';
 
 const Team = () => {
   const motion = usePageMotion();
+  useSeo('Team', 'The people and roles behind FutureTech Africa.');
 
   return (
     <div ref={motion}>

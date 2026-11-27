@@ -3,8 +3,11 @@ import { gsap, MOTION_OK, useGSAP } from '../lib/gsap';
 
 const BASE_SIZE = 100;
 
-/** Company name sized to span its container exactly, rising letter by letter on arrival. */
-const HeroWordmark = ({ text }) => {
+/**
+ * Company name sized to span its container exactly. Letters rise on arrival, or,
+ * with `revealOnScroll`, one after another as the reader scrolls to them.
+ */
+const HeroWordmark = ({ text, revealOnScroll = false }) => {
   const frame = useRef(null);
   const word = useRef(null);
 
@@ -31,6 +34,18 @@ const HeroWordmark = ({ text }) => {
   useGSAP(() => {
     gsap.matchMedia().add(MOTION_OK, () => {
       const letters = frame.current.querySelectorAll('[data-letter]');
+
+      if (revealOnScroll) {
+        gsap.fromTo(letters, { yPercent: 105 }, {
+          yPercent: 0,
+          ease: 'power2.out',
+          stagger: 0.12,
+          // `bottom bottom` is always reachable, even for the last thing on a page.
+          scrollTrigger: { trigger: frame.current, start: 'top bottom', end: 'bottom bottom', scrub: 0.5 },
+        });
+        return;
+      }
+
       gsap.from(letters, { yPercent: 105, duration: 1.3, ease: 'soft', stagger: 0.045, delay: 0.3 });
       gsap.to(word.current, {
         yPercent: 18,

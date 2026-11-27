@@ -5,28 +5,39 @@ import Footer from './components/Footer';
 import PageTransition from './components/PageTransition';
 import Home from './pages/Home';
 import About from './pages/About';
-import Opportunities from './pages/Opportunities';
-import Portfolio from './pages/Portfolio';
-import Projects from './pages/Projects';
 import Contact from './pages/Contact';
+import Market from './pages/Market';
+import Opportunities from './pages/Opportunities';
+import Pricing from './pages/Pricing';
+import Product from './pages/Product';
+import Products from './pages/Products';
+import Solution from './pages/Solution';
+import Solutions from './pages/Solutions';
 import Team from './pages/Team';
+import Work from './pages/Work';
 import { sampleFor, samples } from './samples/registry';
 
 const pageNames = {
-  '/': 'Home',
-  '/about': 'About',
-  '/team': 'Team',
-  '/projects': 'Services',
-  '/portfolio': 'Portfolio',
-  '/opportunities': 'Opportunities',
-  '/contact': 'Contact',
+  '': 'Home',
+  about: 'About',
+  contact: 'Contact',
+  kenya: 'Kenya',
+  opportunities: 'Opportunities',
+  portfolio: 'Work',
+  pricing: 'Pricing',
+  products: 'Products',
+  projects: 'Solutions',
+  solutions: 'Solutions',
+  team: 'Team',
+  uganda: 'Uganda',
+  work: 'Work',
 };
 
 /** What the transition curtain shows on the way to `to`. */
 const curtainFor = (to, from) => {
   const sample = sampleFor(to.pathname);
   if (!sample) {
-    return { mark: '/favicon.svg', label: pageNames[to.pathname] || '', className: 'bg-[#0e0933] text-paper' };
+    return { mark: '/favicon.svg', label: pageNames[to.pathname.split('/')[1]] || '', className: 'bg-[#0e0933] text-paper' };
   }
   // Moving around inside one shop gets a quick fade instead of the full curtain.
   return { ...sample.curtain, label: sample.name, isQuick: sampleFor(from.pathname) === sample };
@@ -61,12 +72,22 @@ function App() {
               <main id="main" tabIndex={-1} className="pt-[72px]">
                 <Routes location={location}>
                   <Route path="/" element={<Home />} />
+                  <Route path="/solutions" element={<Solutions />} />
+                  <Route path="/solutions/:id" element={<Solution />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/products/:id" element={<Product />} />
+                  <Route path="/work" element={<Work />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/uganda" element={<Market key="ug" code="ug" />} />
+                  <Route path="/kenya" element={<Market key="ke" code="ke" />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/opportunities" element={<Opportunities />} />
-                  <Route path="/portfolio" element={<Portfolio />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/contact" element={<Contact />} />
                   <Route path="/team" element={<Team />} />
+                  <Route path="/opportunities" element={<Opportunities />} />
+                  <Route path="/contact" element={<Contact />} />
+                  {/* Earlier addresses keep working. */}
+                  <Route path="/projects" element={<Solutions />} />
+                  <Route path="/portfolio" element={<Work />} />
+                  <Route path="*" element={<Home />} />
                 </Routes>
               </main>
               <Footer />

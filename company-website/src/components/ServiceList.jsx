@@ -47,9 +47,12 @@ const ServiceList = ({ onSelect }) => {
                   {isComingSoon ? (
                     <p className="mt-4 text-sm text-muted-invert sm:hidden">Coming soon</p>
                   ) : (
-                    <Button variant="light" className="mt-6" onClick={() => onSelect(service.name)}>
-                      Discuss this service
-                    </Button>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <Button variant="light" onClick={() => onSelect(service.name)}>
+                        Discuss this service
+                      </Button>
+                      <Button variant="glass" to={`/solutions/${service.id}`}>What it includes</Button>
+                    </div>
                   )}
                 </div>
               </div>

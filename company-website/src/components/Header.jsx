@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Button from './Button';
+import MarketSelector from './MarketSelector';
 import Wordmark from './Wordmark';
 import { gsap, prefersReducedMotion, useGSAP } from '../lib/gsap';
 
 const navigation = [
+  { name: 'Solutions', href: '/solutions' },
+  { name: 'Products', href: '/products' },
+  { name: 'Work', href: '/work' },
+  { name: 'Pricing', href: '/pricing' },
   { name: 'About', href: '/about' },
+];
+
+const menuOnly = [
   { name: 'Team', href: '/team' },
-  { name: 'Services', href: '/projects' },
-  { name: 'Portfolio', href: '/portfolio' },
   { name: 'Opportunities', href: '/opportunities' },
-  { name: 'Pricing', href: '/#pricing' },
+  { name: 'Contact', href: '/contact' },
 ];
 
 const Header = () => {
@@ -20,9 +26,7 @@ const Header = () => {
   const menu = useRef(null);
   const toggle = useRef(null);
 
-  const isActive = (href) => (href === '/#pricing'
-    ? location.pathname === '/' && location.hash === '#pricing'
-    : location.pathname === href);
+  const isActive = (href) => location.pathname === href || location.pathname.startsWith(`${href}/`);
 
   // Tuck the bar away while reading downward; bring it back on any upward scroll.
   useEffect(() => {
@@ -68,7 +72,7 @@ const Header = () => {
       gsap.timeline()
         .set(menu.current, { visibility: 'visible' })
         .fromTo(menu.current, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.65 * speed, ease: 'curtain' })
-        .fromTo('[data-menu-item]', { yPercent: 110 }, { yPercent: 0, duration: 0.7 * speed, ease: 'soft', stagger: 0.05 * speed }, 0.25 * speed);
+        .fromTo('[data-menu-item]', { yPercent: 110 }, { yPercent: 0, duration: 0.7 * speed, ease: 'soft', stagger: 0.04 * speed }, 0.25 * speed);
     } else {
       gsap.to(menu.current, {
         clipPath: 'inset(0% 0% 100% 0%)',
@@ -89,10 +93,10 @@ const Header = () => {
           isHidden && !isMenuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
-        <div className="shell flex h-[71px] items-center justify-between gap-6">
+        <div className="shell flex h-[71px] items-center justify-between gap-4">
           <Wordmark onClick={closeMenu} />
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -105,9 +109,15 @@ const Header = () => {
             ))}
           </nav>
 
-          <Button to="/contact" size="md" arrow={false} className="hidden lg:inline-flex">
-            Get in touch
-          </Button>
+          <div className="hidden items-center gap-3 lg:flex">
+            <MarketSelector compact />
+            <Button to="/contact" size="md" arrow={false} className="hidden xl:inline-flex">
+              Book a discovery call
+            </Button>
+            <Button to="/contact" size="md" arrow={false} className="xl:!hidden">
+              Contact
+            </Button>
+          </div>
 
           <button
             ref={toggle}
@@ -130,19 +140,20 @@ const Header = () => {
         ref={menu}
         id="mobile-menu"
         aria-label="Mobile navigation"
-        className="invisible fixed inset-x-0 bottom-0 top-[72px] z-40 flex flex-col justify-between overflow-y-auto bg-paper px-5 pb-8 pt-4 sm:px-8 lg:hidden"
+        className="invisible fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-paper px-5 pb-8 pt-4 sm:px-8 lg:hidden"
       >
-        <ul>
-          {[...navigation, { name: 'Contact', href: '/contact' }].map((item) => (
+        <MarketSelector />
+        <ul className="mt-3">
+          {[...navigation, ...menuOnly].map((item) => (
             <li key={item.name} className="border-b border-line">
-              <Link to={item.href} onClick={closeMenu} className="block overflow-hidden py-4">
-                <span data-menu-item className="block text-title font-medium">{item.name}</span>
+              <Link to={item.href} onClick={closeMenu} className="block overflow-hidden py-3">
+                <span data-menu-item className="block text-row font-medium">{item.name}</span>
               </Link>
             </li>
           ))}
         </ul>
-        <Button to="/contact" size="lg" onClick={closeMenu} className="mt-8 self-start">
-          Start a project
+        <Button to="/contact" size="lg" onClick={closeMenu} className="mt-6">
+          Book a discovery call
         </Button>
       </nav>
     </>

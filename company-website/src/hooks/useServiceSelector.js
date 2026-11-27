@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 
 /** State for the guided service selector, ending on the pre-filled contact form. */
 export default function useServiceSelector() {
-  const [state, setState] = useState({ isOpen: false, service: '', selectedPackage: null });
+  const [state, setState] = useState({ isOpen: false, service: '' });
   const navigate = useNavigate();
 
-  const open = (service = '', selectedPackage = null) => {
-    setState({ isOpen: true, service, selectedPackage });
+  const open = (service = '') => {
+    setState({ isOpen: true, service });
   };
 
   const close = () => setState((current) => ({ ...current, isOpen: false }));
@@ -17,11 +17,12 @@ export default function useServiceSelector() {
     modalProps: {
       isOpen: state.isOpen,
       initialService: state.service,
-      initialPackage: state.selectedPackage,
       onClose: close,
-      onContinue: (project) => {
+      onContinue: ({ service, market, segment, stage, timeline }) => {
         close();
-        navigate('/contact', { state: { serviceInquiry: project } });
+        navigate('/contact', {
+          state: { enquiry: { service, market, segment, timeline, message: `Project stage: ${stage}\n\n` } },
+        });
       },
     },
   };

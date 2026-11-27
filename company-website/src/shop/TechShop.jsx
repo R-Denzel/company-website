@@ -210,7 +210,7 @@ const TechShop = () => {
           <button type="button" onClick={scrollToCatalogue} className="h-11 rounded-full bg-ink px-4 text-sm font-semibold text-paper shadow-md shadow-ink/10 transition-colors hover:bg-violet-deep sm:px-5">
             Shop all
           </button>
-          <Link to="/portfolio" aria-label="Leave the sample and return to FutureTech Africa" className="grid h-11 w-11 place-items-center rounded-full bg-paper shadow-md shadow-ink/10 transition-colors hover:bg-mist">
+          <Link to="/work" aria-label="Leave the sample and return to FutureTech Africa" className="grid h-11 w-11 place-items-center rounded-full bg-paper shadow-md shadow-ink/10 transition-colors hover:bg-mist">
             <X aria-hidden="true" className="h-4 w-4" />
           </Link>
         </div>
@@ -352,7 +352,7 @@ const TechShop = () => {
           </div>
           <div className="flex flex-wrap gap-3">
             <Button size="lg" variant="light" to="/contact">Talk to FutureTech</Button>
-            <Button size="lg" variant="glass" to="/portfolio">Back to the portfolio</Button>
+            <Button size="lg" variant="glass" to="/work">Back to the portfolio</Button>
           </div>
         </div>
       </footer>

@@ -1,56 +1,83 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, ArrowUpRight, Check } from 'lucide-react';
+import { AlertCircle, ArrowUpRight, Check, MessageCircle } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import Aurora from '../components/Aurora';
 import Button from '../components/Button';
+import MarketSelector from '../components/MarketSelector';
 import Photo from '../components/Photo';
 import usePageMotion from '../hooks/usePageMotion';
+import useSeo from '../hooks/useSeo';
+import { whatsappLink } from '../content/markets';
+import { addons, allPackages, billingLabels, findPackage, formatPrice } from '../content/pricing';
+import { products } from '../content/products';
+import { needs, segments } from '../content/segments';
 import { contactChannels, linkTarget } from '../data/contacts';
 import { photos } from '../data/photos';
+import { logEvent } from '../lib/analytics';
+import { enquirySubject, enquiryText, initialEnquiry, locationBands, sizeBands, timelines } from '../lib/enquiry';
+import { setMarket, setSegment, usePreferences } from '../lib/preferences';
 import { sendContactEmail } from '../utils/emailService';
 
-const makeInitialForm = (serviceInquiry) => ({
-  name: '',
-  email: '',
-  subject: serviceInquiry?.service || '',
-  message: serviceInquiry
-    ? `Service: ${serviceInquiry.service}\nMarket: ${serviceInquiry.market}\nProject stage: ${serviceInquiry.stage}\nPreferred timeline: ${serviceInquiry.timeline}\n${serviceInquiry.selectedPackage ? `Selected package: ${serviceInquiry.selectedPackage.name}\nIndicative estimate: ${serviceInquiry.selectedPackage.estimate}\nReference price: ${serviceInquiry.selectedPackage.referencePrice}\n` : ''}\nProject details:\n`
-    : '',
-});
+const Field = ({ label, children }) => (
+  <label className="block text-sm font-medium">
+    {label}
+    {children}
+  </label>
+);
 
 const Contact = () => {
   const location = useLocation();
-  const serviceInquiry = location.state?.serviceInquiry;
-  const [formData, setFormData] = useState(() => makeInitialForm(serviceInquiry));
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const preferences = usePreferences();
+  const prefill = location.state?.enquiry;
+  const [form, setForm] = useState(() => initialEnquiry(preferences, prefill));
+  const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');
   const motion = usePageMotion();
+  useSeo('Contact and discovery call', 'Request a quote or book a discovery call with FutureTech Africa in Uganda or Kenya.');
 
-  useEffect(() => {
-    if (serviceInquiry) setFormData(makeInitialForm(serviceInquiry));
-  }, [serviceInquiry]);
+  // The market buttons in the header and this form always agree.
+  const values = { ...form, market: preferences.market };
+  const chosen = findPackage(values.packageId);
+  const isDiscovery = values.segment === 'corporate';
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((current) => ({ ...current, [name]: value }));
+  const set = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
+  const text = (field, props = {}) => <input value={values[field]} onChange={set(field)} className="field" {...props} />;
+  const select = (field, options, empty, props = {}) => (
+    <select value={values[field]} onChange={set(field)} className="field" {...props}>
+      <option value="">{empty}</option>
+      {options.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+    </select>
+  );
+  const same = (list) => list.map((entry) => [entry, entry]);
+
+  const finish = (channel) => {
+    logEvent('enquiry_completed', { channel, market: values.market, segment: values.segment || 'unset', package: values.packageId || 'none' });
+    setStatus(channel);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsLoading(true);
     setError('');
 
+    if (event.nativeEvent.submitter?.value === 'whatsapp') {
+      logEvent('whatsapp_click', { market: values.market, from: 'enquiry_form' });
+      window.open(whatsappLink(values.market, `${enquirySubject(values)}\n\n${enquiryText(values)}`), '_blank', 'noopener');
+      finish('whatsapp');
+      return;
+    }
+
+    setStatus('sending');
     try {
-      await sendContactEmail(formData);
-      setIsSubmitted(true);
+      await sendContactEmail({ name: values.name, email: values.email, subject: enquirySubject(values), message: enquiryText(values) });
+      finish('email');
     } catch (sendError) {
       console.error('Error sending email:', sendError);
-      setError('We couldn’t send your message. Please try again or email us directly.');
-    } finally {
-      setIsLoading(false);
+      setError('We couldn’t send your enquiry by email. Send it on WhatsApp instead, or email us directly.');
+      setStatus('idle');
     }
   };
+
+  const done = status === 'email' || status === 'whatsapp';
 
   return (
     <div ref={motion}>
@@ -58,7 +85,7 @@ const Contact = () => {
         <Aurora mask="corner" />
         <div className="shell pb-16 pt-16 sm:pt-28">
           <h1 data-split data-delay="0.25" className="max-w-5xl text-[clamp(2.75rem,8vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em]">
-            Let’s talk about your project.
+            {isDiscovery ? 'Book a discovery call.' : 'Let’s talk about your project.'}
           </h1>
           <div data-rule className="mt-12 h-px bg-ink/15 sm:mt-20" />
         </div>
@@ -67,12 +94,12 @@ const Contact = () => {
       <section className="shell split pb-20 sm:pb-32">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <p data-fade data-delay="0.4" className="max-w-md text-lead text-muted">
-            Have a question, an idea, or a project to scope? Send us a message or contact our team in Uganda and Kenya directly.
+            Send an enquiry, or contact our team in Uganda and Kenya directly.
           </p>
           <ul className="mt-10">
             {contactChannels.map((channel) => (
               <li key={channel.href} data-fade data-delay="0.45" className="border-b border-line">
-                <a href={channel.href} {...linkTarget(channel)} className="group flex items-center justify-between gap-4 py-5">
+                <a href={channel.href} {...linkTarget(channel)} onClick={() => channel.isExternal && logEvent('whatsapp_click', { from: 'contact_page' })} className="group flex items-center justify-between gap-4 py-5">
                   <span className="min-w-0">
                     <span className="block text-sm text-muted">{channel.label}</span>
                     <span className="mt-1 block break-all text-xl font-medium tracking-[-0.02em] sm:break-normal">{channel.value}</span>
@@ -85,81 +112,105 @@ const Contact = () => {
             ))}
           </ul>
 
-          {serviceInquiry && (
-            <div data-fade className="mt-8 rounded-2xl bg-mist p-6">
-              <h2 className="text-sm font-semibold">Your project outline</h2>
-              <p className="mt-3 text-lg font-medium">{serviceInquiry.service}</p>
-              <p className="mt-2 text-sm leading-6 text-muted">
-                {serviceInquiry.market} · {serviceInquiry.stage} · {serviceInquiry.timeline}
-              </p>
-              {serviceInquiry.selectedPackage && (
-                <p className="mt-1 text-sm leading-6 text-muted">
-                  Package: {serviceInquiry.selectedPackage.name} · {serviceInquiry.selectedPackage.estimate}
-                </p>
-              )}
-              <p className="mt-3 text-sm leading-6 text-muted">We’ve added these details to your message so you can fill in the project specifics.</p>
+          {chosen && (
+            <div className="mt-8 rounded-2xl bg-mist p-6">
+              <h2 className="text-sm font-semibold">Your chosen package</h2>
+              <p className="mt-3 text-lg font-medium">{chosen.name}</p>
+              <p className="mt-1 tabular-nums">{formatPrice(chosen.price, values.market)}</p>
+              <p className="mt-2 text-sm leading-6 text-muted">{billingLabels[chosen.billing]}. Indicative; your quotation confirms scope and price.</p>
             </div>
           )}
         </div>
 
         <div data-fade data-delay="0.5">
-          {isSubmitted ? (
+          {done ? (
             <div role="status" className="rounded-2xl bg-mist p-8 sm:p-12">
               <span aria-hidden="true" className="grid h-14 w-14 place-items-center rounded-full bg-violet text-paper"><Check className="h-6 w-6" /></span>
-              <h2 className="mt-8 text-title font-medium">Message sent</h2>
+              <h2 className="mt-8 text-title font-medium">{status === 'email' ? 'Enquiry sent' : 'Finish in WhatsApp'}</h2>
               <p className="mt-4 max-w-md text-lead text-muted">
-                Thanks for reaching out. We’ll review your message and get back to you.
+                {status === 'email'
+                  ? 'Thanks for reaching out. We’ll review your enquiry and get back to you.'
+                  : 'We opened WhatsApp with your details filled in. Press send there to reach us. If nothing opened, use a WhatsApp link on this page.'}
               </p>
-              <Button
-                size="lg"
-                className="mt-8"
-                onClick={() => {
-                  setIsSubmitted(false);
-                  setFormData(makeInitialForm(null));
-                }}
-              >
-                Send another message
-              </Button>
+              <Button size="lg" className="mt-8" onClick={() => { setForm(initialEnquiry(preferences)); setStatus('idle'); }}>New enquiry</Button>
             </div>
           ) : (
-            <>
-              <h2 className="text-title font-medium">Tell us a little about it.</h2>
-              <p className="mt-3 text-base text-muted">A few details will help us understand what you need.</p>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div>
+                <p className="mb-3 text-sm font-medium">Market</p>
+                <MarketSelector />
+              </div>
 
-              <form onSubmit={handleSubmit} className="mt-10 space-y-8">
-                <div className="grid gap-8 sm:grid-cols-2">
-                  <label htmlFor="contact-name" className="block text-sm font-medium">
-                    Your name *
-                    <input id="contact-name" type="text" name="name" value={formData.name} onChange={handleInputChange} autoComplete="name" required className="field" placeholder="Full name" />
-                  </label>
-                  <label htmlFor="contact-email" className="block text-sm font-medium">
-                    Email address *
-                    <input id="contact-email" type="email" name="email" value={formData.email} onChange={handleInputChange} autoComplete="email" required className="field" placeholder="you@company.com" />
-                  </label>
+              <div className="grid gap-8 sm:grid-cols-2">
+                <Field label="Business category *">
+                  <select
+                    required
+                    value={values.segment}
+                    onChange={(event) => { set('segment')(event); setSegment(event.target.value); }}
+                    className="field"
+                  >
+                    <option value="">Choose one</option>
+                    {segments.map((entry) => <option key={entry.id} value={entry.id}>{entry.name}</option>)}
+                  </select>
+                </Field>
+                <Field label="Main need">{select('need', needs.map((entry) => [entry.id, entry.label]), 'Not sure yet')}</Field>
+                <Field label="Package or service">
+                  {select('packageId', allPackages.map((entry) => [entry.id, entry.name]), values.service || 'Recommend one')}
+                </Field>
+                <Field label="Product of interest">{select('product', products.map((entry) => [entry.id, entry.name]), 'None')}</Field>
+                <Field label="Industry">{text('industry', { placeholder: 'Retail, school, clinic…' })}</Field>
+                <Field label="Team size">{select('size', same(sizeBands), 'Choose one')}</Field>
+                <Field label="Locations">{select('locations', same(locationBands), 'Choose one')}</Field>
+                <Field label="Timeline">{select('timeline', same(timelines), 'Choose one')}</Field>
+                <Field label="Current tools">{text('tools', { placeholder: 'Spreadsheets, paper, other software…' })}</Field>
+                <Field label="Budget range (optional)">{text('budget', { placeholder: 'In your own words' })}</Field>
+              </div>
+
+              <fieldset>
+                <legend className="text-sm font-medium">Add-ons</legend>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {addons.map((entry) => (
+                    <label key={entry.id} className="flex items-center gap-3 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={values.addonIds.includes(entry.id)}
+                        onChange={(event) => setForm((current) => ({ ...current, addonIds: event.target.checked ? [...current.addonIds, entry.id] : current.addonIds.filter((id) => id !== entry.id) }))}
+                        className="h-5 w-5 shrink-0 accent-violet"
+                      />
+                      {entry.name}
+                    </label>
+                  ))}
                 </div>
+              </fieldset>
 
-                <label htmlFor="contact-subject" className="block text-sm font-medium">
-                  What can we help with? *
-                  <input id="contact-subject" type="text" name="subject" value={formData.subject} onChange={handleInputChange} required className="field" placeholder="Website, mobile app, custom software…" />
-                </label>
+              <div className="grid gap-8 sm:grid-cols-2">
+                <Field label="Your name *">{text('name', { required: true, autoComplete: 'name', placeholder: 'Full name' })}</Field>
+                <Field label="Email address *">{text('email', { required: true, type: 'email', autoComplete: 'email', placeholder: 'you@company.com' })}</Field>
+                <Field label="Phone (optional)">{text('phone', { type: 'tel', autoComplete: 'tel' })}</Field>
+                <Field label="Organisation (optional)">{text('organisation', { autoComplete: 'organization' })}</Field>
+              </div>
 
-                <label htmlFor="contact-message" className="block text-sm font-medium">
-                  Project details *
-                  <textarea id="contact-message" name="message" value={formData.message} onChange={handleInputChange} required rows={8} className="field resize-y leading-7" placeholder="What are you hoping to build or improve?" />
-                </label>
+              <Field label="What problem do you want solved? *">
+                <textarea required rows={5} value={values.message} onChange={set('message')} className="field resize-y leading-7" placeholder="What are you hoping to build or improve?" />
+              </Field>
 
-                {error && (
-                  <div role="alert" className="flex items-start gap-3 rounded-xl border border-danger/30 bg-danger/5 p-4 text-sm text-danger">
-                    <AlertCircle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
-                    <span>{error}</span>
-                  </div>
-                )}
+              {error && (
+                <div role="alert" className="flex items-start gap-3 rounded-xl border border-danger/30 bg-danger/5 p-4 text-sm text-danger">
+                  <AlertCircle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
 
-                <Button type="submit" size="lg" disabled={isLoading}>
-                  {isLoading ? 'Sending…' : 'Send message'}
+              <div className="flex flex-wrap gap-3">
+                <Button type="submit" value="email" size="lg" disabled={status === 'sending'}>
+                  {status === 'sending' ? 'Sending…' : 'Send by email'}
                 </Button>
-              </form>
-            </>
+                <Button type="submit" value="whatsapp" size="lg" variant="secondary" icon={MessageCircle} disabled={status === 'sending'}>
+                  Send on WhatsApp
+                </Button>
+              </div>
+              <p className="text-sm leading-6 text-muted">We use these details only to respond to your enquiry. Choosing WhatsApp shares them through WhatsApp.</p>
+            </form>
           )}
         </div>
       </section>
@@ -171,4 +222,16 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+// A new set of choices from elsewhere starts a fresh form.
+const ContactPage = () => {
+  const location = useLocation();
+  const marketFromLink = location.state?.enquiry?.market;
+
+  useEffect(() => {
+    if (marketFromLink) setMarket(marketFromLink);
+  }, [location.key, marketFromLink]);
+
+  return <Contact key={location.key} />;
+};
+
+export default ContactPage;

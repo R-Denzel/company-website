@@ -1,26 +1,23 @@
 import { useRef, useState } from 'react';
 import { ArrowLeft, Check } from 'lucide-react';
 import { services } from '../data/services';
+import { marketList, markets } from '../content/markets';
+import { findSegment, segments } from '../content/segments';
+import { timelines } from '../lib/enquiry';
+import { setMarket, setSegment, usePreferences } from '../lib/preferences';
 import Button from './Button';
 import Dialog from './Dialog';
 import { gsap, prefersReducedMotion, useGSAP } from '../lib/gsap';
 
-const markets = ['Uganda', 'Kenya', 'Other African market', 'Outside Africa'];
-const timelines = ['As soon as possible', '1–3 months', 'Flexible'];
 const stages = ['Exploring an idea', 'Ready to start', 'Improving an existing product'];
 
 const steps = ['Choose a service', 'Project scope', 'Review'];
 
-const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = '', initialPackage = null }) => {
+const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = '' }) => {
+  const preferences = usePreferences();
   const [step, setStep] = useState(0);
   const [wasOpen, setWasOpen] = useState(false);
-  const [selection, setSelection] = useState({
-    service: '',
-    market: 'Uganda',
-    stage: stages[0],
-    timeline: timelines[1],
-    selectedPackage: null,
-  });
+  const [selection, setSelection] = useState({ service: '', stage: stages[0], timeline: timelines[1] });
   const body = useRef(null);
 
   // Reset to the first step with the requested service each time the sheet opens.
@@ -28,16 +25,7 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
     setWasOpen(isOpen);
     if (isOpen) {
       setStep(0);
-      setSelection((current) => ({
-        ...current,
-        service: initialService,
-        market: initialPackage?.market === 'Uganda' || initialPackage?.market === 'Kenya'
-          ? initialPackage.market
-          : initialPackage
-            ? 'Outside Africa'
-            : current.market,
-        selectedPackage: initialPackage,
-      }));
+      setSelection((current) => ({ ...current, service: initialService }));
     }
   }
 
@@ -46,8 +34,8 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
     gsap.fromTo(body.current.children, { autoAlpha: 0, x: 32 }, { autoAlpha: 1, x: 0, duration: 0.6, ease: 'soft', stagger: 0.05 });
   }, { dependencies: [step] });
 
-  const selectedService = services.find((service) => service.name === selection.service);
   const update = (field) => (event) => setSelection((current) => ({ ...current, [field]: event.target.value }));
+  const complete = { ...selection, market: preferences.market, segment: preferences.segment };
 
   return (
     <Dialog open={isOpen} onClose={onClose} labelledBy="service-selector-title" closeLabel="Close service selector">
@@ -76,11 +64,7 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
                     type="button"
                     disabled={isComingSoon}
                     aria-pressed={isSelected}
-                    onClick={() => setSelection((current) => ({
-                      ...current,
-                      service: service.name,
-                      selectedPackage: service.name === current.service ? current.selectedPackage : null,
-                    }))}
+                    onClick={() => setSelection((current) => ({ ...current, service: service.name }))}
                     className="group flex w-full items-start justify-between gap-5 border-b border-line py-4 text-left disabled:cursor-not-allowed"
                   >
                     <span>
@@ -104,9 +88,16 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
         {step === 1 && (
           <div className="space-y-8">
             <label className="block text-sm font-medium">
-              Where will the product be used?
-              <select value={selection.market} onChange={update('market')} className="field">
-                {markets.map((market) => <option key={market}>{market}</option>)}
+              Which market are you in?
+              <select value={preferences.market} onChange={(event) => setMarket(event.target.value)} className="field">
+                {marketList.map((market) => <option key={market.code} value={market.code}>{market.name}</option>)}
+              </select>
+            </label>
+            <label className="block text-sm font-medium">
+              How would you describe your business?
+              <select value={preferences.segment} onChange={(event) => setSegment(event.target.value)} className="field">
+                <option value="">Not sure yet</option>
+                {segments.map((segment) => <option key={segment.id} value={segment.id}>{segment.name} ({segment.size})</option>)}
               </select>
             </label>
             <label className="block text-sm font-medium">
@@ -128,14 +119,11 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
           <>
             <dl>
               {[
-                ['Service', selectedService?.name],
-                ['Market', selection.market],
+                ['Service', selection.service],
+                ['Market', markets[preferences.market].name],
+                ['Business category', findSegment(preferences.segment)?.name || 'Not sure yet'],
                 ['Project stage', selection.stage],
                 ['Timeline', selection.timeline],
-                ...(selection.selectedPackage ? [[
-                  'Selected package',
-                  `${selection.selectedPackage.name} · ${selection.selectedPackage.estimate} estimate · ${selection.selectedPackage.referencePrice} reference`,
-                ]] : []),
               ].map(([term, value]) => (
                 <div key={term} className="flex flex-col gap-1 border-b border-line py-4 sm:flex-row sm:justify-between sm:gap-8">
                   <dt className="text-muted">{term}</dt>
@@ -161,7 +149,7 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
             Continue
           </Button>
         ) : (
-          <Button size="lg" onClick={() => onContinue(selection)}>Continue to contact</Button>
+          <Button size="lg" onClick={() => onContinue(complete)}>Continue to contact</Button>
         )}
       </div>
     </Dialog>

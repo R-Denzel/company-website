@@ -5,6 +5,7 @@ import PageIntro from '../components/PageIntro';
 import Photo from '../components/Photo';
 import { photos } from '../data/photos';
 import usePageMotion from '../hooks/usePageMotion';
+import useSeo from '../hooks/useSeo';
 import { services } from '../data/services';
 
 const principles = [
@@ -51,6 +52,7 @@ const foundingGoals = [
 
 const About = () => {
   const motion = usePageMotion();
+  useSeo('About', 'Why FutureTech Africa started, and how we work with businesses and institutions.');
 
   return (
     <div ref={motion}>
@@ -133,7 +135,7 @@ const About = () => {
           <div className="lg:sticky lg:top-28 lg:self-start">
             <h2 data-split className="max-w-md text-title font-medium">Support for the whole digital journey.</h2>
             <div data-fade className="mt-8">
-              <Button variant="secondary" to="/projects">View services</Button>
+              <Button variant="secondary" to="/solutions">View solutions</Button>
             </div>
           </div>
           <ul>

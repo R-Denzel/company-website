@@ -27,7 +27,7 @@ const Actions = ({ onPanel }) => {
     <div className="flex items-center justify-end">
       <IconButton label="Wishlist" count={wishlist.length} icon={Heart} onClick={() => onPanel('wishlist')} />
       <IconButton label="My bag" count={bagCount} icon={ShoppingBag} onClick={() => onPanel('bag')} />
-      <Link to="/portfolio" aria-label="Leave the sample and return to FutureTech Africa" className="grid h-11 w-10 place-items-center transition-colors hover:text-k-gold sm:w-11">
+      <Link to="/work" aria-label="Leave the sample and return to FutureTech Africa" className="grid h-11 w-10 place-items-center transition-colors hover:text-k-gold sm:w-11">
         <X aria-hidden="true" className="h-5 w-5" strokeWidth={1.5} />
       </Link>
     </div>
