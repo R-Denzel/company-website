@@ -18,8 +18,8 @@ import { setSegment, useMarket, usePreferences } from '../lib/preferences';
 
 const Step = ({ number, title, children }) => (
   <div className="mt-14 first:mt-0">
-    <h2 className="flex items-baseline gap-4 text-row font-medium">
-      <span className="tabular-nums text-violet">{number}</span>
+    <h2 className="flex items-baseline gap-4 text-subheading">
+      <span className="tabular-nums text-brand-deep">{number}</span>
       {title}
     </h2>
     <div className="mt-6">{children}</div>
@@ -27,7 +27,7 @@ const Step = ({ number, title, children }) => (
 );
 
 const chip = (isOn) => `min-h-11 rounded-full border px-5 py-2 text-sm font-medium transition-colors duration-300 ${
-  isOn ? 'border-violet bg-violet text-paper' : 'border-line hover:border-violet'
+  isOn ? 'border-brand-deep bg-brand text-ink' : 'border-line hover:border-brand-deep'
 }`;
 
 const Pricing = () => {
@@ -73,7 +73,7 @@ const Pricing = () => {
         Choose your market and business size to see relevant packages. Final scope and price are confirmed after a consultation.
       </PageIntro>
 
-      <section className="shell pb-16 sm:pb-24">
+      <section className="shell section">
         <ApprovalNotice />
 
         <div className="mt-12">
@@ -89,7 +89,7 @@ const Pricing = () => {
               <div className="mt-3 flex flex-col gap-3 text-sm sm:flex-row sm:gap-8">
                 {[['manyLocations', 'We run more than one location or outlet'], ['sensitive', 'We handle complex finances, regulated or sensitive data']].map(([key, label]) => (
                   <label key={key} className="flex items-center gap-3">
-                    <input type="checkbox" checked={complexity[key]} onChange={(event) => setComplexity((current) => ({ ...current, [key]: event.target.checked }))} className="h-5 w-5 accent-violet" />
+                    <input type="checkbox" checked={complexity[key]} onChange={(event) => setComplexity((current) => ({ ...current, [key]: event.target.checked }))} className="h-5 w-5 accent-brand-deep" />
                     {label}
                   </label>
                 ))}
@@ -115,12 +115,12 @@ const Pricing = () => {
         </div>
       </section>
 
-      <section aria-labelledby="recommended-title" className="bg-mist py-16 sm:py-24">
+      <section aria-labelledby="recommended-title" className="bg-mist section">
         <div className="shell">
-          <h2 id="recommended-title" className="text-title font-medium">Recommended for you</h2>
+          <h2 id="recommended-title" className="text-heading">Recommended for you</h2>
           {segment ? (
             <>
-              <p role="status" className="mt-3 max-w-2xl text-base text-muted">
+              <p role="status" className="mt-3 max-w-2xl text-muted">
                 {findSegment(segment).name}, {market.name}. {segment === 'corporate'
                   ? 'Corporate work starts with discovery. Ranges are indicative and the proposal sets the scope.'
                   : 'You can choose a different package or ask for something custom.'}
@@ -131,13 +131,13 @@ const Pricing = () => {
               <div className="mt-8"><Button size="lg" onClick={() => enquire({})}>Request a tailored quotation</Button></div>
             </>
           ) : (
-            <p className="mt-3 text-lead text-muted">Select your business size above to see recommended packages.</p>
+            <p className="mt-3 text-muted">Select your business size above to see recommended packages.</p>
           )}
         </div>
       </section>
 
-      <section id="services" aria-labelledby="all-prices-title" className="shell scroll-mt-24 py-16 sm:py-24">
-        <h2 id="all-prices-title" className="text-title font-medium">All service prices in {market.currency}</h2>
+      <section id="services" aria-labelledby="all-prices-title" className="shell scroll-mt-24 section">
+        <h2 id="all-prices-title" className="text-heading">All service prices in {market.currency}</h2>
         <div role="group" aria-label="Service area" className="mt-8 flex flex-wrap gap-2">
           {allPillars.map((pillar) => (
             <button key={pillar.id} type="button" aria-pressed={area.id === pillar.id} onClick={() => chooseArea(pillar.id)} className={chip(area.id === pillar.id)}>
@@ -148,7 +148,7 @@ const Pricing = () => {
 
         {groups.filter((group) => area.groups.includes(group.id)).map((group) => (
           <div key={group.id} className="mt-14">
-            <h3 className="text-row font-medium">{group.name}</h3>
+            <h3 className="text-subheading">{group.name}</h3>
             <ul className="mt-3 max-w-3xl space-y-1 text-sm leading-6 text-muted">
               {group.notes.map((note) => <li key={note}>{note}</li>)}
               {group.examples && <li>Examples: {group.examples.join(', ')}.</li>}
@@ -162,10 +162,10 @@ const Pricing = () => {
         ))}
       </section>
 
-      <section aria-labelledby="addons-title" className="shell border-t border-line py-16 sm:py-24">
+      <section aria-labelledby="addons-title" className="shell border-t border-line section">
         <div className="split">
-          <h2 id="addons-title" data-split className="max-w-md text-title font-medium">Add what you need.</h2>
-          <p data-fade className="max-w-xl text-lead text-muted">Add-on estimates. Complex integrations are assessed individually. Ticked items travel with your enquiry.</p>
+          <h2 id="addons-title" data-split className="max-w-xl text-heading">Add what you need.</h2>
+          <p data-fade className="max-w-xl text-muted">Add-on estimates. Complex integrations are assessed individually. Ticked items travel with your enquiry.</p>
         </div>
         <ul className="mt-10">
           {addons.map((entry) => (
@@ -175,7 +175,7 @@ const Pricing = () => {
                   type="checkbox"
                   checked={addonIds.includes(entry.id)}
                   onChange={(event) => setAddonIds((current) => (event.target.checked ? [...current, entry.id] : current.filter((id) => id !== entry.id)))}
-                  className="h-5 w-5 accent-violet"
+                  className="h-5 w-5 accent-brand-deep"
                 />
                 <span className="flex-1 font-medium">{entry.name}</span>
                 <span className="tabular-nums">{formatPrice(entry.price, market.code)}</span>
@@ -192,7 +192,7 @@ const Pricing = () => {
       <BillingTerms />
 
       <CallToAction title="Need something custom?" text="Tell us the problem. We will recommend a package or scope a proposal.">
-        <Button size="lg" variant="light" onClick={() => enquire({ service: 'Something custom' })}>{market.quoteCta}</Button>
+        <Button size="lg" onClick={() => enquire({ service: 'Something custom' })}>{market.quoteCta}</Button>
       </CallToAction>
     </div>
   );

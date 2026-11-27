@@ -8,7 +8,7 @@ export const sampleProjects = [
   {
     name: 'Karafuu Parfums',
     category: 'Sample website · Luxury perfume shop',
-    description: 'A demo perfume house with product pages, scent filters, a wishlist and a shopping bag.',
+    description: 'A demo perfume house with product pages, scent filters, a wishlist and a bag.',
     url: '/work/karafuu',
     isSample: true,
     image: karafuu,
@@ -17,7 +17,7 @@ export const sampleProjects = [
   {
     name: 'Voltway',
     category: 'Sample website · Phone and laptop shop',
-    description: 'A demo tech shop with a scroll-driven 3D showcase, a filterable catalogue and product enquiries.',
+    description: 'A demo tech shop with a 3D showcase, a filterable catalogue and enquiries.',
     url: '/work/tech-shop',
     isSample: true,
     image: voltway,

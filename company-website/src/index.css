@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    color: #140f2e;
+    color: #090425;
     background: #ffffff;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -13,7 +13,7 @@
   }
 
   html {
-    scrollbar-color: #b3a9dc #ffffff;
+    scrollbar-color: #b9bcc6 #ffffff;
   }
 
   body {
@@ -33,24 +33,24 @@
   }
 
   ::selection {
-    color: #140f2e;
-    background: #ffc3b3;
+    color: #090425;
+    background: #77cefb;
   }
 
   input,
   textarea,
   select {
-    caret-color: #6440f5;
+    caret-color: #1f5fd0;
   }
 
   :focus-visible {
-    outline: 2px solid #6440f5;
+    outline: 2px solid #1f5fd0;
     outline-offset: 3px;
   }
 
-  /* Dark regions swap the focus ring to soft coral so it stays visible. */
+  /* Dark regions swap the focus ring to light blue so it stays visible. */
   .on-ink :focus-visible {
-    outline-color: #ffc3b3;
+    outline-color: #77cefb;
   }
 
   /* The Karafuu sample shop has its own gold focus ring. */
@@ -68,18 +68,56 @@
     @apply mx-auto w-full max-w-[90rem] px-5 sm:px-8 lg:px-16;
   }
 
+  .text-heading,
+  .text-subheading {
+    @apply font-display;
+  }
+
+  /* The closing words of a headline, picked out in the logo's blue. */
+  .headline-accent {
+    @apply text-brand-deep;
+  }
+
+  .on-ink .headline-accent {
+    @apply text-brand-light;
+  }
+
+  /* The logo's setting: deep navy with a blue light behind the subject. */
+  .logo-ground {
+    background:
+      radial-gradient(55% 85% at 76% 45%, rgb(21 37 183 / 0.42), transparent 72%),
+      #090425;
+  }
+
+  /* The thin streak of light that sits under the name in the logo. */
+  .streak {
+    @apply pointer-events-none absolute inset-x-0 bottom-0 h-px;
+    background: linear-gradient(90deg, transparent 4%, #1525b7 24%, #3799f9 42%, #d1e7fb 50%, #3799f9 58%, #1525b7 76%, transparent 96%);
+    box-shadow: 0 0 18px 2px rgb(55 153 249 / 0.35);
+  }
+
+  /* A slanted frame, cut at the same lean as the blades of the mark. */
+  .slant {
+    clip-path: polygon(11% 0, 100% 0, 89% 100%, 0 100%);
+  }
+
+  /* One vertical rhythm for every section on the company site. */
+  .section {
+    @apply py-16 sm:py-24;
+  }
+
   /* Two-column editorial split: heading side and content side. */
   .split {
     @apply grid gap-8 lg:grid-cols-2 lg:gap-16;
   }
 
   .field {
-    @apply mt-2 block w-full rounded-none border-0 border-b border-line bg-transparent px-0 py-3 text-base text-ink outline-none transition-colors duration-300 placeholder:text-muted hover:border-muted focus:border-violet;
+    @apply mt-2 block w-full rounded-none border-0 border-b border-line bg-transparent px-0 py-3 text-base text-ink outline-none transition-colors duration-300 placeholder:text-muted hover:border-muted focus:border-brand;
   }
 
   .field:focus-visible {
     outline: none;
-    box-shadow: 0 1px 0 0 #6440f5;
+    box-shadow: 0 1px 0 0 #1f5fd0;
   }
 
   .text-link {

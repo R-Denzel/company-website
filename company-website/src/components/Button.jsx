@@ -2,16 +2,20 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const variants = {
-  primary: { body: 'bg-ink text-paper hover:bg-violet-deep', dot: 'bg-gradient-to-br from-violet-soft to-coral-soft text-ink' },
-  secondary: { body: 'bg-mist text-ink hover:bg-line', dot: 'bg-violet text-paper' },
-  light: { body: 'bg-paper text-ink hover:bg-mist', dot: 'bg-violet text-paper' },
-  ghost: { body: 'bg-transparent text-ink hover:bg-mist', dot: 'bg-mist text-ink' },
-  glass: { body: 'bg-paper/15 text-paper hover:bg-paper/25', dot: 'bg-paper text-ink' },
+  // The azure of the mark, running light to the right as it does in the logo.
+  primary: 'bg-gradient-to-r from-brand to-brand-light text-ink hover:from-brand-light',
+  secondary: 'border border-ink/20 bg-transparent text-ink hover:border-ink [.on-ink_&]:border-paper/35 [.on-ink_&]:text-paper [.on-ink_&]:hover:border-paper',
+  // Solid navy, used by the Voltway sample shop.
+  dark: 'bg-ink text-paper hover:bg-violet-deep',
+  light: 'bg-paper text-ink hover:bg-mist',
+  ghost: 'bg-transparent text-ink hover:bg-mist',
+  // For dark grounds (used by the Voltway sample shop).
+  glass: 'border border-paper/40 text-paper hover:bg-paper/10',
 };
 
 const sizes = {
-  md: { body: 'h-11 text-sm', text: 'px-5', arrow: 'pl-5 pr-1.5', dot: 'h-8 w-8' },
-  lg: { body: 'h-14 text-base', text: 'px-7', arrow: 'pl-7 pr-2', dot: 'h-10 w-10' },
+  md: 'min-h-11 px-5 py-2 text-sm',
+  lg: 'min-h-12 px-6 py-2.5 text-base',
 };
 
 /** Pill button. Renders a router link with `to`, an external link with `href`, otherwise a button. */
@@ -28,9 +32,7 @@ const Button = ({
   ...props
 }) => {
   const Icon = icon;
-  const tone = variants[variant];
-  const scale = sizes[size];
-  const classes = `group inline-flex shrink-0 items-center justify-center gap-4 whitespace-nowrap rounded-full font-medium transition-colors duration-300 ease-soft disabled:cursor-not-allowed disabled:opacity-40 ${tone.body} ${scale.body} ${arrow ? scale.arrow : scale.text} ${className}`;
+  const classes = `group inline-flex shrink-0 items-center justify-center gap-2.5 whitespace-nowrap rounded-full font-medium transition-colors duration-300 ease-soft disabled:cursor-not-allowed disabled:opacity-40 ${variants[variant]} ${sizes[size]} ${className}`;
 
   const content = (
     <>
@@ -39,9 +41,7 @@ const Button = ({
         <span aria-hidden="true">{children}</span>
       </span>
       {arrow && (
-        <span aria-hidden="true" className={`grid place-items-center rounded-full ${tone.dot} ${scale.dot}`}>
-          <Icon className="h-4 w-4 transition-transform duration-500 ease-soft group-hover:rotate-[-45deg] group-disabled:rotate-0" />
-        </span>
+        <Icon aria-hidden="true" className="h-4 w-4 shrink-0 transition-transform duration-500 ease-soft group-hover:rotate-[-45deg] group-disabled:rotate-0" />
       )}
     </>
   );

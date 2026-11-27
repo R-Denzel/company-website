@@ -89,7 +89,7 @@ const Header = () => {
     <>
       <header
         onFocus={() => setIsHidden(false)}
-        className={`fixed inset-x-0 top-0 z-50 border-b border-line bg-paper transition-transform duration-500 ease-soft ${
+        className={`on-ink fixed inset-x-0 top-0 z-50 border-b border-ink-line bg-ink text-paper transition-transform duration-500 ease-soft ${
           isHidden && !isMenuOpen ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
@@ -110,7 +110,7 @@ const Header = () => {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
-            <MarketSelector compact />
+            <MarketSelector tone="dark" compact />
             <Button to="/contact" size="md" arrow={false} className="hidden xl:inline-flex">
               Book a discovery call
             </Button>
@@ -122,15 +122,15 @@ const Header = () => {
           <button
             ref={toggle}
             type="button"
-            className="flex h-11 items-center gap-3 rounded-full bg-mist pl-5 pr-4 text-sm font-medium lg:hidden"
+            className="flex h-11 items-center gap-3 rounded-full bg-ink-soft pl-5 pr-4 text-sm font-medium lg:hidden"
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
             onClick={() => setIsMenuOpen((open) => !open)}
           >
             {isMenuOpen ? 'Close' : 'Menu'}
             <span aria-hidden="true" className="relative block h-2.5 w-4">
-              <span className={`absolute left-0 h-px w-4 bg-ink transition-all duration-500 ease-soft ${isMenuOpen ? 'top-[5px] rotate-45' : 'top-0.5'}`} />
-              <span className={`absolute left-0 h-px w-4 bg-ink transition-all duration-500 ease-soft ${isMenuOpen ? 'top-[5px] -rotate-45' : 'top-2'}`} />
+              <span className={`absolute left-0 h-px w-4 bg-paper transition-all duration-500 ease-soft ${isMenuOpen ? 'top-[5px] rotate-45' : 'top-0.5'}`} />
+              <span className={`absolute left-0 h-px w-4 bg-paper transition-all duration-500 ease-soft ${isMenuOpen ? 'top-[5px] -rotate-45' : 'top-2'}`} />
             </span>
           </button>
         </div>
@@ -140,14 +140,14 @@ const Header = () => {
         ref={menu}
         id="mobile-menu"
         aria-label="Mobile navigation"
-        className="invisible fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-paper px-5 pb-8 pt-4 sm:px-8 lg:hidden"
+        className="on-ink invisible fixed inset-x-0 bottom-0 top-[72px] z-40 overflow-y-auto bg-ink text-paper px-5 pb-8 pt-4 sm:px-8 lg:hidden"
       >
-        <MarketSelector />
+        <MarketSelector tone="dark" />
         <ul className="mt-3">
           {[...navigation, ...menuOnly].map((item) => (
-            <li key={item.name} className="border-b border-line">
+            <li key={item.name} className="border-b border-ink-line">
               <Link to={item.href} onClick={closeMenu} className="block overflow-hidden py-3">
-                <span data-menu-item className="block text-row font-medium">{item.name}</span>
+                <span data-menu-item className="block text-subheading">{item.name}</span>
               </Link>
             </li>
           ))}

@@ -39,7 +39,7 @@ const ProductDialog = ({ product, open, onClose }) => {
                   <span className="block text-3xl font-medium tracking-[-0.03em] tabular-nums">{formatPrice(product.price)}</span>
                   <span className="text-sm text-muted">Sample price</span>
                 </p>
-                <Button size="lg" onClick={() => setView('enquiry')}>Enquire about this device</Button>
+                <Button variant="dark" size="lg" onClick={() => setView('enquiry')}>Enquire about this device</Button>
               </div>
             </>
           )}
@@ -64,7 +64,7 @@ const ProductDialog = ({ product, open, onClose }) => {
                 <input required autoComplete="off" className="field" />
               </label>
               <div className="flex flex-wrap gap-3">
-                <Button type="submit" size="lg">Try the enquiry</Button>
+                <Button type="submit" variant="dark" size="lg">Try the enquiry</Button>
                 <Button variant="ghost" size="lg" arrow={false} onClick={() => setView('details')}>Back to details</Button>
               </div>
             </form>

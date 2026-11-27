@@ -7,8 +7,8 @@ import { logEvent } from '../lib/analytics';
 
 /** Shown wherever amounts appear until the owner approves them. */
 export const ApprovalNotice = () => (PRICING_APPROVED ? null : (
-  <p role="note" className="rounded-xl border border-coral bg-coral-soft/30 px-4 py-3 text-sm leading-6">
-    <strong className="font-semibold">Proposed pricing, awaiting approval.</strong> These figures are indicative and are not final quotations.
+  <p role="note" className="rounded-lg border border-brand-deep bg-paper px-4 py-3 text-sm leading-6">
+    <strong className="font-medium">Proposed pricing, awaiting approval.</strong> These figures are indicative and are not final quotations.
   </p>
 ));
 
@@ -24,20 +24,20 @@ const PriceCard = ({ entry, market, onChoose }) => {
   const segment = findSegment(entry.segment);
 
   return (
-    <article className="flex flex-col rounded-2xl border border-line bg-paper p-6 sm:p-7">
+    <article className="flex flex-col rounded-xl border border-line bg-paper p-6 sm:p-7">
       {segment && <p className="mb-2 text-sm text-muted">Best for: {segment.name.toLowerCase()}</p>}
-      <h3 className="text-xl font-semibold tracking-[-0.02em]">{entry.name}</h3>
+      <h3 className="text-subheading">{entry.name}</h3>
       <p className="mt-2 text-sm leading-6 text-muted">{entry.summary}</p>
 
-      <p className="mt-6 text-[1.7rem] font-medium leading-tight tracking-[-0.03em] tabular-nums">{formatPrice(entry.price, market)}</p>
-      <p className="mt-2 text-sm font-semibold text-violet-deep">{billingLabels[entry.billing]} · {priceStatus(entry.price)}</p>
+      <p className="mt-6 text-subheading font-medium tabular-nums">{formatPrice(entry.price, market)}</p>
+      <p className="mt-2 text-sm text-muted">{billingLabels[entry.billing]} · {priceStatus(entry.price)}</p>
 
       <div className="mt-5 border-t border-line pt-5">
         {entry.includes ? (
           <ul className="space-y-2.5">
             {entry.includes.map((feature) => (
               <li key={feature} className="flex gap-3 text-sm leading-6">
-                <Check aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-violet" />
+                <Check aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-brand-deep" />
                 {feature}
               </li>
             ))}
@@ -48,10 +48,10 @@ const PriceCard = ({ entry, market, onChoose }) => {
       </div>
 
       <dl className="mt-5 space-y-2 text-sm leading-6">
-        <div><dt className="inline font-semibold">Revisions: </dt><dd className="inline text-muted">{entry.revisions || 'Set out in your quotation'}</dd></div>
-        <div><dt className="inline font-semibold">Support and timeline: </dt><dd className="inline text-muted">Set out in your quotation</dd></div>
-        <div><dt className="inline font-semibold">Billed separately: </dt><dd className="inline text-muted">Third-party charges unless expressly included</dd></div>
-        {terms && <div><dt className="inline font-semibold">Payment: </dt><dd className="inline text-muted">{terms.terms}</dd></div>}
+        <div><dt className="inline font-medium">Revisions: </dt><dd className="inline text-muted">{entry.revisions || 'Set out in your quotation'}</dd></div>
+        <div><dt className="inline font-medium">Support and timeline: </dt><dd className="inline text-muted">Set out in your quotation</dd></div>
+        <div><dt className="inline font-medium">Billed separately: </dt><dd className="inline text-muted">Third-party charges unless expressly included</dd></div>
+        {terms && <div><dt className="inline font-medium">Payment: </dt><dd className="inline text-muted">{terms.terms}</dd></div>}
       </dl>
 
       <div className="mt-auto pt-6">

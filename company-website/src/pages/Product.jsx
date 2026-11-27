@@ -17,12 +17,12 @@ const List = ({ title, note, items, icon }) => {
   const Icon = icon;
   return (
     <div>
-      <h2 className="text-row font-medium">{title}</h2>
+      <h2 className="text-subheading">{title}</h2>
       <p className="mt-2 text-sm text-muted">{note}</p>
       <ul className="mt-6">
         {items.map((entry) => (
           <li key={entry} data-fade className="flex gap-4 border-t border-line py-4 leading-7">
-            <Icon aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-violet" />
+            <Icon aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-brand-deep" />
             {entry}
           </li>
         ))}
@@ -68,20 +68,20 @@ const Detail = ({ product }) => {
         {product.positioning} Who it is for: {product.audience.charAt(0).toLowerCase() + product.audience.slice(1)}
       </PageIntro>
 
-      <figure className="shell m-0">
-        <div data-clip className="overflow-hidden rounded-2xl border border-line bg-mist">
+      <figure className="shell m-0 pt-16 sm:pt-24">
+        <div data-clip className="overflow-hidden rounded-xl border border-line bg-mist">
           <img src={product.project.image} alt={product.project.alt} width="1440" height="900" decoding="async" className="block w-full" />
         </div>
         <figcaption className="mt-3 text-sm text-muted">Screenshot of the live beta, taken November 2026. Any figures shown are sample or empty data.</figcaption>
       </figure>
 
-      <section className="shell grid gap-16 py-16 sm:py-24 lg:grid-cols-2">
+      <section className="shell grid gap-16 section lg:grid-cols-2">
         <List title="Seen in the live app" note="Observed in the public beta." items={product.seen} icon={Check} />
         <List title="Still being confirmed" note="Do not rely on these until we confirm them for you." items={product.unconfirmed} icon={Clock} />
       </section>
 
-      <section className="shell border-t border-line py-16 sm:py-24" aria-labelledby="product-pricing">
-        <h2 id="product-pricing" data-split className="text-title font-medium">Pricing</h2>
+      <section className="shell border-t border-line section" aria-labelledby="product-pricing">
+        <h2 id="product-pricing" data-split className="text-heading">Pricing</h2>
         {product.subscriptions ? (
           <>
             <div className="mt-6"><ApprovalNotice /></div>
@@ -94,19 +94,19 @@ const Detail = ({ product }) => {
           </>
         ) : (
           <div data-fade className="mt-6 max-w-2xl">
-            <p className="text-lead text-muted">No price is published yet. Tell us how you would use {product.name} and we will talk it through.</p>
+            <p className="text-muted">No price is published yet. Tell us how you would use {product.name} and we will talk it through.</p>
             <Button size="lg" variant="secondary" className="mt-8" onClick={() => enquire()}>Talk to us</Button>
           </div>
         )}
       </section>
 
-      <section className="shell border-t border-line py-16 sm:py-24">
+      <section className="shell border-t border-line section">
         <div className="split">
-          <h2 data-split className="max-w-md text-title font-medium">Questions</h2>
+          <h2 data-split className="max-w-xl text-heading">Questions</h2>
           <dl>
             {questions(product).map(([question, answer]) => (
               <div key={question} data-fade className="border-b border-line py-5 first:pt-0">
-                <dt className="text-lg font-semibold">{question}</dt>
+                <dt className="font-medium">{question}</dt>
                 <dd className="mt-2 leading-7 text-muted">{answer}</dd>
               </div>
             ))}
@@ -115,8 +115,8 @@ const Detail = ({ product }) => {
       </section>
 
       <CallToAction title={`See ${product.name} with your own workflow.`} text="A short walkthrough is the quickest way to find out whether it fits.">
-        <Button size="lg" variant="light" onClick={() => enquire()}>Request a demo</Button>
-        <Button size="lg" variant="glass" to="/products">All products</Button>
+        <Button size="lg" onClick={() => enquire()}>Request a demo</Button>
+        <Button size="lg" variant="secondary" to="/products">All products</Button>
       </CallToAction>
     </div>
   );

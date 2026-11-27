@@ -15,7 +15,7 @@ const MarketSelector = ({ compact = false, tone = 'light', className = '' }) => 
           aria-label={`${option.name}, prices in ${option.currency}`}
           onClick={() => setMarket(option.code)}
           className={`h-9 whitespace-nowrap rounded-full px-3 text-sm font-medium transition-colors duration-300 ${
-            market === option.code ? 'bg-violet text-paper' : idle
+            market === option.code ? 'bg-brand text-ink' : idle
           }`}
         >
           {compact ? option.code.toUpperCase() : `${option.name} (${option.currency})`}

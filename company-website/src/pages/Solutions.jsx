@@ -1,6 +1,5 @@
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Aurora from '../components/Aurora';
 import Button from '../components/Button';
 import CallToAction from '../components/CallToAction';
 import PageIntro from '../components/PageIntro';
@@ -20,36 +19,33 @@ const Solutions = () => {
         We develop financial technology, business systems, intelligent automation and custom software.
       </PageIntro>
 
-      <section className="on-ink relative isolate py-16 text-paper sm:py-24">
-        <Aurora tone="dark" expand />
-        <ul className="shell">
+      <section className="shell section">
+        <ul className="border-b border-line">
           {pillars.map((pillar) => (
-            <li key={pillar.id} data-fade className="border-t border-ink-line last:border-b">
-              <Link to={`/solutions/${pillar.id}`} className="group grid gap-4 py-10 lg:grid-cols-[1fr_1fr_auto] lg:items-center lg:gap-12">
-                <h2 className="text-title font-medium transition-transform duration-500 ease-soft group-hover:translate-x-2">{pillar.name}</h2>
-                <p className="max-w-xl text-lead text-paper/85">{pillar.summary}</p>
-                <span aria-hidden="true" className="grid h-12 w-12 place-items-center rounded-full bg-paper text-ink">
-                  <ArrowUpRight className="h-5 w-5 transition-transform duration-500 ease-soft group-hover:rotate-45" />
-                </span>
+            <li key={pillar.id} data-fade className="border-t border-line">
+              <Link to={`/solutions/${pillar.id}`} className="group grid gap-2 py-8 lg:grid-cols-[1fr_1.2fr_auto] lg:items-center lg:gap-12">
+                <h2 className="text-subheading transition-colors duration-300 group-hover:text-brand-deep">{pillar.name}</h2>
+                <p className="max-w-xl text-muted">{pillar.summary}</p>
+                <ArrowRight aria-hidden="true" className="h-5 w-5 text-brand-deep transition-transform duration-300 ease-soft group-hover:translate-x-1" />
               </Link>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="shell py-16 sm:py-24">
+      <section className="shell pb-16 sm:pb-24">
         <div className="split">
-          <h2 data-split className="max-w-md text-title font-medium">{growth.name}</h2>
+          <h2 data-split className="max-w-xl text-heading">{growth.name}</h2>
           <div data-fade>
-            <p className="max-w-xl text-lead text-muted">{growth.summary} {growth.description}</p>
+            <p className="max-w-xl text-muted">{growth.summary} {growth.description}</p>
             <Button variant="secondary" size="lg" to={`/solutions/${growth.id}`} className="mt-8">See growth services</Button>
           </div>
         </div>
       </section>
 
       <CallToAction title="Not sure where you fit?" text="Choose your business size and main need, and we will point you to the right starting place.">
-        <Button size="lg" variant="light" to="/pricing">Find the right solution</Button>
-        <Button size="lg" variant="glass" to="/contact">{market.teamCta}</Button>
+        <Button size="lg" to="/pricing">Find the right solution</Button>
+        <Button size="lg" variant="secondary" to="/contact">{market.teamCta}</Button>
       </CallToAction>
     </div>
   );

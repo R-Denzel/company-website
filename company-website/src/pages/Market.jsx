@@ -55,8 +55,8 @@ const Market = ({ code }) => {
         {market.summary} {market.paymentsNote}
       </PageIntro>
 
-      <section className="shell py-16 sm:py-24" aria-labelledby="market-bundles">
-        <h2 id="market-bundles" data-split className="text-title font-medium">Starting bundles in {market.currency}</h2>
+      <section className="shell section" aria-labelledby="market-bundles">
+        <h2 id="market-bundles" data-split className="text-heading">Starting bundles in {market.currency}</h2>
         <div className="mt-6"><ApprovalNotice /></div>
         <div className="mt-8 grid items-stretch gap-4 md:grid-cols-3">
           {bundles.filter((entry) => entry.segment === 'small').map((entry) => (
@@ -66,8 +66,8 @@ const Market = ({ code }) => {
       </section>
 
       <CallToAction title="Bigger or more complex?" text="See growing-business bundles and discovery-led corporate work.">
-        <Button size="lg" variant="light" to="/pricing?segment=growing">Growing business</Button>
-        <Button size="lg" variant="glass" to="/pricing?segment=corporate">Corporate or institution</Button>
+        <Button size="lg" to="/pricing?segment=growing">Growing business</Button>
+        <Button size="lg" variant="secondary" to="/pricing?segment=corporate">Corporate or institution</Button>
       </CallToAction>
     </div>
   );

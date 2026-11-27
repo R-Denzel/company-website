@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { AlertCircle, Check } from 'lucide-react';
 import Button from '../components/Button';
 import CallToAction from '../components/CallToAction';
-import Constellation from '../components/Constellation';
 import Dialog from '../components/Dialog';
 import PageIntro from '../components/PageIntro';
 import Photo from '../components/Photo';
@@ -72,44 +71,38 @@ const Opportunities = () => {
         We welcome thoughtful enquiries from people and organizations interested in building useful digital products with FutureTech Africa.
       </PageIntro>
 
-      <div className="shell pb-20 sm:pb-32">
-        <Photo {...photos.collaborators} className="h-[60svh] min-h-[18rem]" />
+      <div className="shell pt-16 sm:pt-24">
+        <Photo {...photos.collaborators} className="aspect-[4/3] sm:aspect-[21/9]" />
       </div>
 
-      <section className="on-ink relative isolate bg-ink py-20 text-paper sm:py-32">
-        <Constellation />
-        <div className="shell">
-          <div className="split">
-            <h2 data-split className="max-w-md text-title font-medium">What would you like to explore?</h2>
-            <p data-fade className="max-w-xl text-lead text-muted-invert">This is an open enquiry channel, not a list of active job vacancies.</p>
-          </div>
-          <ul className="mt-14">
-            {collaborationWays.map((way) => (
-              <li key={way.title}>
-                <div data-rule className="h-px bg-ink-line" />
-                <div data-fade className="grid gap-3 py-10 lg:grid-cols-2 lg:gap-16">
-                  <h3 className="text-title font-medium">{way.title}</h3>
-                  <p className="max-w-xl text-lead text-muted-invert">{way.description}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+      <section className="shell section">
+        <div className="split">
+          <h2 data-split className="max-w-xl text-heading">What would you like to explore?</h2>
+          <p data-fade className="max-w-xl text-muted">This is an open enquiry channel, not a list of active job vacancies.</p>
         </div>
+        <ul className="mt-12">
+          {collaborationWays.map((way) => (
+            <li key={way.title} data-fade className="grid gap-2 border-t border-line py-6 lg:grid-cols-2 lg:gap-16">
+              <h3 className="text-subheading">{way.title}</h3>
+              <p className="max-w-xl text-muted">{way.description}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <CallToAction title="Tell us what you’d like to work on." text="Share a few details and our team can take it from there.">
-        <Button size="lg" variant="light" onClick={openForm}>Start an enquiry</Button>
+        <Button size="lg" onClick={openForm}>Start an enquiry</Button>
       </CallToAction>
 
       <Dialog open={isFormOpen} onClose={closeForm} labelledBy="collaboration-form-title" closeLabel="Close enquiry form">
-        <h2 id="collaboration-form-title" className="text-title font-medium">
+        <h2 id="collaboration-form-title" className="text-subheading">
           {isSubmitted ? 'Thanks for reaching out.' : 'Tell us about your idea.'}
         </h2>
 
         {isSubmitted ? (
           <div role="status" className="mt-8">
-            <span aria-hidden="true" className="grid h-14 w-14 place-items-center rounded-full bg-violet text-paper"><Check className="h-6 w-6" /></span>
-            <p className="mt-6 text-lead text-muted">Your enquiry has been sent to our team.</p>
+            <span aria-hidden="true" className="grid h-14 w-14 place-items-center rounded-full bg-brand text-ink"><Check className="h-6 w-6" /></span>
+            <p className="mt-6 text-muted">Your enquiry has been sent to our team.</p>
             <Button size="lg" variant="secondary" arrow={false} className="mt-8" onClick={closeForm}>Close</Button>
           </div>
         ) : (

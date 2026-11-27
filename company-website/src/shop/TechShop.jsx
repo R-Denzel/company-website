@@ -88,7 +88,7 @@ const ProductSlide = ({ product, index, active, onOpen }) => {
           {product.name} · {formatPrice(product.price)} <span className="font-normal">(sample price)</span>
         </p>
         <div className={`mt-4 transition-opacity duration-500 xl:hidden ${active ? 'opacity-100 delay-300' : 'opacity-0'}`}>
-          <Button onClick={() => onOpen(product)}>Explore</Button>
+          <Button variant="dark" onClick={() => onOpen(product)}>Explore</Button>
         </div>
       </div>
     </article>

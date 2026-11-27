@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, ArrowUpRight, Check, MessageCircle } from 'lucide-react';
+import { AlertCircle, ArrowRight, Check, MessageCircle } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-import Aurora from '../components/Aurora';
 import Button from '../components/Button';
 import MarketSelector from '../components/MarketSelector';
+import PageIntro from '../components/PageIntro';
 import Photo from '../components/Photo';
 import usePageMotion from '../hooks/usePageMotion';
 import useSeo from '../hooks/useSeo';
@@ -81,41 +81,30 @@ const Contact = () => {
 
   return (
     <div ref={motion}>
-      <section className="relative isolate">
-        <Aurora mask="corner" />
-        <div className="shell pb-16 pt-16 sm:pt-28">
-          <h1 data-split data-delay="0.25" className="max-w-5xl text-[clamp(2.75rem,8vw,6rem)] font-medium leading-[0.98] tracking-[-0.04em]">
-            {isDiscovery ? 'Book a discovery call.' : 'Let’s talk about your project.'}
-          </h1>
-          <div data-rule className="mt-12 h-px bg-ink/15 sm:mt-20" />
-        </div>
-      </section>
+      <PageIntro title={isDiscovery ? 'Book a discovery call.' : 'Let’s talk about your project.'}>
+        Send an enquiry, or contact our team in Uganda and Kenya directly.
+      </PageIntro>
 
-      <section className="shell split pb-20 sm:pb-32">
+      <section className="shell section split">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <p data-fade data-delay="0.4" className="max-w-md text-lead text-muted">
-            Send an enquiry, or contact our team in Uganda and Kenya directly.
-          </p>
-          <ul className="mt-10">
+          <ul>
             {contactChannels.map((channel) => (
               <li key={channel.href} data-fade data-delay="0.45" className="border-b border-line">
                 <a href={channel.href} {...linkTarget(channel)} onClick={() => channel.isExternal && logEvent('whatsapp_click', { from: 'contact_page' })} className="group flex items-center justify-between gap-4 py-5">
                   <span className="min-w-0">
                     <span className="block text-sm text-muted">{channel.label}</span>
-                    <span className="mt-1 block break-all text-xl font-medium tracking-[-0.02em] sm:break-normal">{channel.value}</span>
+                    <span className="mt-1 block break-all font-medium sm:break-normal">{channel.value}</span>
                   </span>
-                  <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-mist transition-colors duration-500 group-hover:bg-ink group-hover:text-paper">
-                    <ArrowUpRight className="h-4 w-4 transition-transform duration-500 ease-soft group-hover:rotate-45" />
-                  </span>
+                  <ArrowRight aria-hidden="true" className="h-5 w-5 shrink-0 text-brand-deep transition-transform duration-300 ease-soft group-hover:translate-x-1" />
                 </a>
               </li>
             ))}
           </ul>
 
           {chosen && (
-            <div className="mt-8 rounded-2xl bg-mist p-6">
-              <h2 className="text-sm font-semibold">Your chosen package</h2>
-              <p className="mt-3 text-lg font-medium">{chosen.name}</p>
+            <div className="mt-8 rounded-xl bg-mist p-6">
+              <h2 className="text-sm font-medium">Your chosen package</h2>
+              <p className="mt-3 font-medium">{chosen.name}</p>
               <p className="mt-1 tabular-nums">{formatPrice(chosen.price, values.market)}</p>
               <p className="mt-2 text-sm leading-6 text-muted">{billingLabels[chosen.billing]}. Indicative; your quotation confirms scope and price.</p>
             </div>
@@ -124,10 +113,10 @@ const Contact = () => {
 
         <div data-fade data-delay="0.5">
           {done ? (
-            <div role="status" className="rounded-2xl bg-mist p-8 sm:p-12">
-              <span aria-hidden="true" className="grid h-14 w-14 place-items-center rounded-full bg-violet text-paper"><Check className="h-6 w-6" /></span>
-              <h2 className="mt-8 text-title font-medium">{status === 'email' ? 'Enquiry sent' : 'Finish in WhatsApp'}</h2>
-              <p className="mt-4 max-w-md text-lead text-muted">
+            <div role="status" className="rounded-xl bg-mist p-8 sm:p-12">
+              <span aria-hidden="true" className="grid h-14 w-14 place-items-center rounded-full bg-brand text-ink"><Check className="h-6 w-6" /></span>
+              <h2 className="mt-8 text-subheading">{status === 'email' ? 'Enquiry sent' : 'Finish in WhatsApp'}</h2>
+              <p className="mt-4 max-w-md text-muted">
                 {status === 'email'
                   ? 'Thanks for reaching out. We’ll review your enquiry and get back to you.'
                   : 'We opened WhatsApp with your details filled in. Press send there to reach us. If nothing opened, use a WhatsApp link on this page.'}
@@ -175,7 +164,7 @@ const Contact = () => {
                         type="checkbox"
                         checked={values.addonIds.includes(entry.id)}
                         onChange={(event) => setForm((current) => ({ ...current, addonIds: event.target.checked ? [...current.addonIds, entry.id] : current.addonIds.filter((id) => id !== entry.id) }))}
-                        className="h-5 w-5 shrink-0 accent-violet"
+                        className="h-5 w-5 shrink-0 accent-brand-deep"
                       />
                       {entry.name}
                     </label>
@@ -215,8 +204,8 @@ const Contact = () => {
         </div>
       </section>
 
-      <div className="shell pb-20 sm:pb-32">
-        <Photo {...photos.nairobi} className="h-[60svh] min-h-[18rem]" />
+      <div className="shell pb-16 sm:pb-24">
+        <Photo {...photos.nairobi} className="aspect-[4/3] sm:aspect-[21/9]" />
       </div>
     </div>
   );

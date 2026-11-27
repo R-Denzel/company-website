@@ -34,22 +34,22 @@ const Detail = ({ pillar }) => {
         {pillar.description}
       </PageIntro>
 
-      <section className="shell py-16 sm:py-24">
+      <section className="shell section">
         <div className="split">
-          <h2 data-split className="max-w-md text-title font-medium">What you can buy.</h2>
+          <h2 data-split className="max-w-xl text-heading">What you can buy.</h2>
           <ul>
-            {pillar.deliverables.map((entry) => <li key={entry} data-fade className="border-b border-line py-4 text-xl font-medium first:pt-0">{entry}</li>)}
-            {pillar.comingSoon?.map((entry) => <li key={entry} data-fade className="border-b border-line py-4 text-xl text-muted">{entry} <span className="ml-2 text-sm font-semibold text-violet-deep">Coming soon</span></li>)}
+            {pillar.deliverables.map((entry) => <li key={entry} data-fade className="border-b border-line py-4 first:pt-0">{entry}</li>)}
+            {pillar.comingSoon?.map((entry) => <li key={entry} data-fade className="border-b border-line py-4 text-muted">{entry} <span className="ml-2 text-sm text-muted">Coming soon</span></li>)}
           </ul>
         </div>
       </section>
 
       <section className="shell pb-16 sm:pb-24" aria-labelledby="solution-prices">
-        <h2 id="solution-prices" data-split className="text-title font-medium">Prices in {market.currency}</h2>
+        <h2 id="solution-prices" data-split className="text-heading">Prices in {market.currency}</h2>
         <div className="mt-6"><ApprovalNotice /></div>
         {groups.filter((group) => pillar.groups.includes(group.id)).map((group) => (
           <div key={group.id} className="mt-12">
-            <h3 className="text-row font-medium">{group.name}</h3>
+            <h3 className="text-subheading">{group.name}</h3>
             <ul className="mt-4">
               {services.filter((entry) => entry.group === group.id).map((entry) => (
                 <li key={entry.id} className="grid gap-1 border-t border-line py-4 sm:grid-cols-[1fr_auto_11rem] sm:items-baseline sm:gap-8">
@@ -68,13 +68,13 @@ const Detail = ({ pillar }) => {
       </section>
 
       {related.length > 0 && (
-        <section className="shell border-t border-line py-16 sm:py-24">
-          <h2 data-split className="text-title font-medium">Related products</h2>
+        <section className="shell border-t border-line section">
+          <h2 data-split className="text-heading">Related products</h2>
           <ul className="mt-10">
             {related.map((product) => (
               <li key={product.id} className="border-t border-line">
                 <Link to={`/products/${product.id}`} className="group flex flex-wrap items-center gap-x-5 gap-y-2 py-6">
-                  <span className="text-row font-medium">{product.name}</span>
+                  <span className="text-subheading">{product.name}</span>
                   <StatusBadge status={product.status} />
                   <span className="flex-1 text-muted">{product.category}</span>
                   <ArrowUpRight aria-hidden="true" className="h-5 w-5 transition-transform duration-500 ease-soft group-hover:rotate-45" />
@@ -86,8 +86,8 @@ const Detail = ({ pillar }) => {
       )}
 
       <CallToAction title="Talk through your project." text="Share what you need and what you use today. We will confirm scope before any price is final.">
-        <Button size="lg" variant="light" onClick={() => navigate('/contact', { state: { enquiry: { market: market.code, service: pillar.name } } })}>Book a discovery call</Button>
-        <Button size="lg" variant="glass" to="/solutions">All solutions</Button>
+        <Button size="lg" onClick={() => navigate('/contact', { state: { enquiry: { market: market.code, service: pillar.name } } })}>Book a discovery call</Button>
+        <Button size="lg" variant="secondary" to="/solutions">All solutions</Button>
       </CallToAction>
     </div>
   );

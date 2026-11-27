@@ -141,9 +141,9 @@ const PageTransition = ({ header, curtain, preload, children }) => {
         aria-hidden="true"
         className={`pointer-events-none invisible fixed inset-0 z-[85] flex flex-col items-center justify-center gap-5 opacity-0 will-change-transform ${look.className}`}
       >
-        <img src={look.mark} alt="" width="96" height="96" className="h-24 w-24" />
+        {look.mark && <img src={look.mark} alt="" width="96" height="96" className="h-24 w-24" />}
         <span className="block overflow-hidden pb-2">
-          <span ref={label} className="block text-row font-medium">{look.label}</span>
+          <span ref={label} className="block text-subheading">{look.label}</span>
         </span>
       </div>
     </>

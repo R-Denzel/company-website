@@ -1,10 +1,10 @@
 import Button from '../components/Button';
 import CallToAction from '../components/CallToAction';
 import PageIntro from '../components/PageIntro';
-import ProductSummary from '../components/ProductSummary';
+import ProjectGrid from '../components/ProjectGrid';
 import usePageMotion from '../hooks/usePageMotion';
 import useSeo from '../hooks/useSeo';
-import { products } from '../content/products';
+import { productCards } from '../data/portfolio';
 
 const Products = () => {
   const motion = usePageMotion();
@@ -16,12 +16,12 @@ const Products = () => {
         Three products you can open today. Each page separates what we saw working in the live app from what is still being confirmed.
       </PageIntro>
 
-      <section className="shell grid gap-x-6 gap-y-16 py-16 sm:py-24 md:grid-cols-2 xl:grid-cols-3">
-        {products.map((product) => <ProductSummary key={product.id} product={product} />)}
+      <section className="shell section">
+        <ProjectGrid items={productCards} />
       </section>
 
       <CallToAction title="Want to try one?" text="Ask for a walkthrough and tell us how your business works today.">
-        <Button size="lg" variant="light" to="/contact">Request a demo</Button>
+        <Button size="lg" to="/contact">Request a demo</Button>
       </CallToAction>
     </div>
   );

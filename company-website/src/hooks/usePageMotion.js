@@ -3,14 +3,10 @@ import { gsap, MOTION_OK, ScrollTrigger, SplitText, useGSAP } from '../lib/gsap'
 
 /**
  * Declarative page motion. Add the returned ref to a page root, then mark elements:
- *   data-split     headline revealed line by line from behind a mask
- *   data-fade      rises and fades in, staggered with neighbours entering together
- *   data-rule      hairline that draws from the left
- *   data-clip      media block that unmasks upward
- *   data-parallax  image that drifts inside its (overflow-hidden) frame
- *   data-expand    background layer that widens to full bleed as its parent scrolls in
- *   data-grow      media that scales up to size as it scrolls into view
- *   data-scrub     paragraph whose words darken as the reader scrolls
+ *   data-split   headline revealed line by line from behind a mask
+ *   data-fade    rises and fades in, staggered with neighbours entering together
+ *   data-rule    line that draws from the left
+ *   data-clip    media block that rises into place
  * Content is fully visible without JavaScript or with reduced motion.
  */
 export default function usePageMotion() {
@@ -78,46 +74,6 @@ export default function usePageMotion() {
           duration: 1.1,
           ease: 'soft',
           scrollTrigger: { trigger: element, start: 'top 92%', once: true },
-        });
-      });
-
-      select('[data-parallax]').forEach((element) => {
-        gsap.fromTo(element, { yPercent: -6, scale: 1.14 }, {
-          yPercent: 6,
-          scale: 1.14,
-          ease: 'none',
-          scrollTrigger: { trigger: element.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
-        });
-      });
-
-      select('[data-expand]').forEach((element) => {
-        // Ends slightly wider than the page so its rounded corners leave the screen.
-        gsap.fromTo(element, { scaleX: 0.94 }, {
-          scaleX: 1.04,
-          ease: 'none',
-          scrollTrigger: { trigger: element.parentElement, start: 'top 85%', end: 'top 15%', scrub: 0.4 },
-        });
-      });
-
-      select('[data-grow]').forEach((element) => {
-        gsap.fromTo(element, { scale: 0.82, yPercent: 8 }, {
-          scale: 1,
-          yPercent: 0,
-          ease: 'none',
-          scrollTrigger: { trigger: element, start: 'top bottom', end: 'center 55%', scrub: 0.4 },
-        });
-      });
-
-      select('[data-scrub]').forEach((element) => {
-        SplitText.create(element, {
-          type: 'words',
-          autoSplit: true,
-          onSplit: (split) => gsap.from(split.words, {
-            opacity: 0.16,
-            ease: 'none',
-            stagger: 0.1,
-            scrollTrigger: { trigger: element, start: 'top 82%', end: 'bottom 52%', scrub: true },
-          }),
         });
       });
     });

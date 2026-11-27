@@ -37,7 +37,7 @@ const pageNames = {
 const curtainFor = (to, from) => {
   const sample = sampleFor(to.pathname);
   if (!sample) {
-    return { mark: '/favicon.svg', label: pageNames[to.pathname.split('/')[1]] || '', className: 'bg-[#0e0933] text-paper' };
+    return { mark: '/favicon.svg', label: pageNames[to.pathname.split('/')[1]] || '', className: 'bg-ink text-paper' };
   }
   // Moving around inside one shop gets a quick fade instead of the full curtain.
   return { ...sample.curtain, label: sample.name, isQuick: sampleFor(from.pathname) === sample };

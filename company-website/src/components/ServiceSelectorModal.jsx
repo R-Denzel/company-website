@@ -39,7 +39,7 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
 
   return (
     <Dialog open={isOpen} onClose={onClose} labelledBy="service-selector-title" closeLabel="Close service selector">
-      <h2 id="service-selector-title" className="text-title font-medium">{steps[step]}</h2>
+      <h2 id="service-selector-title" className="text-subheading">{steps[step]}</h2>
 
       <div className="mt-6 h-px bg-line">
         <div
@@ -68,7 +68,7 @@ const ServiceSelectorModal = ({ isOpen, onClose, onContinue, initialService = ''
                     className="group flex w-full items-start justify-between gap-5 border-b border-line py-4 text-left disabled:cursor-not-allowed"
                   >
                     <span>
-                      <span className={`block text-lg font-medium ${isComingSoon ? 'text-muted' : ''}`}>{service.shortName}</span>
+                      <span className={`block font-medium ${isComingSoon ? 'text-muted' : ''}`}>{service.shortName}</span>
                       <span className="mt-1 block text-sm leading-6 text-muted">{service.description}</span>
                     </span>
                     {isComingSoon ? (

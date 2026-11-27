@@ -1,21 +1,19 @@
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Aurora from '../components/Aurora';
 import Button from '../components/Button';
 import CallToAction from '../components/CallToAction';
-import HeroWordmark from '../components/HeroWordmark';
+import Headline from '../components/Headline';
 import MarketSelector from '../components/MarketSelector';
 import Photo from '../components/Photo';
-import ProjectCard from '../components/ProjectCard';
+import ProjectGrid from '../components/ProjectGrid';
 import ServiceList from '../components/ServiceList';
 import ServiceSelectorModal from '../components/ServiceSelectorModal';
-import StatusBadge from '../components/StatusBadge';
 import usePageMotion from '../hooks/usePageMotion';
 import useSeo from '../hooks/useSeo';
 import useServiceSelector from '../hooks/useServiceSelector';
 import { segments } from '../content/segments';
 import { photos } from '../data/photos';
-import { featuredProjects, sampleProjects } from '../data/projects';
+import { productCards, sampleCards } from '../data/portfolio';
 import { teamMembers } from '../data/team';
 import { setSegment } from '../lib/preferences';
 
@@ -26,8 +24,6 @@ const workflow = [
   { number: '04', title: 'Build together', text: 'Design, development, feedback, and launch—kept clear from day one.' },
 ];
 
-const [leadProject, ...otherProjects] = featuredProjects;
-
 const Home = () => {
   const selector = useServiceSelector();
   const motion = usePageMotion();
@@ -37,118 +33,76 @@ const Home = () => {
     <div ref={motion}>
       <ServiceSelectorModal {...selector.modalProps} />
 
-      <section className="relative isolate">
-        <Aurora mask="bottom" />
-        <div className="shell flex min-h-[calc(100svh-72px)] flex-col justify-between gap-12 pb-6 pt-10 sm:pt-14">
-          <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
-            <h1 data-split data-delay="0.35" className="max-w-xl text-statement font-medium">
-              We build technology that moves businesses forward.
-            </h1>
-            <div>
-              <p data-fade data-delay="0.55" className="max-w-xl text-lead text-muted">
-                We develop financial technology, business systems, intelligent automation and custom software that help African organisations operate, transact and grow.
-              </p>
-              <div data-fade data-delay="0.6" className="mt-8 flex flex-wrap gap-3">
-                <Button size="lg" to="/pricing">Find your solution</Button>
-                <Button size="lg" variant="secondary" onClick={() => selector.open()}>Select a service</Button>
-              </div>
-            </div>
-          </div>
-
+      <section className="on-ink logo-ground relative text-paper">
+        <div className="shell section grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
           <div>
-            <p data-fade data-delay="0.9" className="mb-4 text-right text-sm text-muted sm:text-base">
-              Uganda &amp; Kenya
+            <h1 data-split data-delay="0.1" className="max-w-xl text-heading">
+              <Headline text="We build technology that moves businesses forward." />
+            </h1>
+            <p data-fade data-delay="0.15" className="mt-5 max-w-xl text-muted-invert">
+              We develop financial technology, business systems, intelligent automation and custom software that help African organisations operate, transact and grow.
             </p>
-            <HeroWordmark text="FutureTech" />
+            <div data-fade data-delay="0.2" className="mt-8 flex flex-wrap gap-3">
+              <Button size="lg" to="/pricing">Find your solution</Button>
+              <Button size="lg" variant="secondary" onClick={() => selector.open()}>Select a service</Button>
+            </div>
+            <p data-fade data-delay="0.25" className="mt-8 text-sm text-muted-invert">Uganda &amp; Kenya</p>
           </div>
+          <Photo {...photos.collaborators} className="slant aspect-[4/3] !rounded-none [&>figcaption]:right-[13%]" />
         </div>
+        <div data-rule aria-hidden="true" className="streak" />
       </section>
 
-      <section id="selected-work" aria-label={`Featured product: ${leadProject.name}`}>
-        <div className="on-ink relative isolate pb-12 pt-12 text-paper sm:pb-16 sm:pt-24">
-          <Aurora tone="dark" expand />
-          <div className="shell">
-            <Link to="/products/myduka" className="group mx-auto block max-w-6xl">
-              <div data-grow className="overflow-hidden rounded-xl border border-ink-line">
-                <img src={leadProject.image} alt={leadProject.alt} width="1440" height="900" className="block w-full transition-transform duration-1000 ease-soft group-hover:scale-[1.025]" />
-              </div>
-              <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-title font-medium">MyDuka</h2>
-                    <StatusBadge status={leadProject.status} />
-                  </div>
-                  <p className="mt-2 text-sm text-muted-invert">{leadProject.category}</p>
-                  <p className="mt-3 max-w-lg text-base leading-7 text-muted-invert">{leadProject.description}</p>
-                </div>
-                <span className="inline-flex shrink-0 items-center gap-4 self-start rounded-full bg-paper py-2 pl-6 pr-2 font-medium text-ink sm:self-auto">
-                  View product
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-paper">
-                    <ArrowUpRight className="h-4 w-4 transition-transform duration-500 ease-soft group-hover:rotate-45" />
-                  </span>
-                </span>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="shell py-20 sm:py-32">
+      <section id="selected-work" className="shell section scroll-mt-24" aria-labelledby="work-heading">
         <div className="split">
-          <h2 data-split className="max-w-md text-title font-medium">Products you can try, and samples of what we build.</h2>
-          <p data-fade className="max-w-xl text-lead text-muted">
+          <h2 id="work-heading" data-split className="max-w-xl text-heading"><Headline text="Products you can try, and samples of what we build." /></h2>
+          <p data-fade className="max-w-xl text-muted">
             Our own products are in beta. Sample websites are demonstrations, not client projects.
           </p>
         </div>
-        <div className="mt-14 grid gap-x-6 gap-y-14 md:grid-cols-2">
-          {[...otherProjects, ...sampleProjects].map((project) => (
-            <ProjectCard key={project.name} project={project} />
-          ))}
+        <div className="mt-12">
+          <ProjectGrid items={[...productCards, ...sampleCards]} centered />
         </div>
-        <div data-fade className="mt-12 flex flex-wrap gap-3">
+        <div data-fade className="mt-10 flex flex-wrap justify-center gap-3">
           <Button variant="secondary" to="/products">All products</Button>
           <Button variant="secondary" to="/work">All our work</Button>
         </div>
       </section>
 
-      <section id="services" className="on-ink relative isolate scroll-mt-24 py-20 text-paper sm:py-32">
-        <Aurora tone="dark" />
-        <div className="shell split">
+      <section id="services" className="scroll-mt-24 bg-mist">
+        <div className="shell section split">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <h2 data-split className="max-w-md text-title font-medium">Technology for the way you work.</h2>
-            <p data-fade className="mt-6 max-w-md text-lead text-muted-invert">
+            <h2 data-split className="max-w-xl text-heading"><Headline text="Technology for the way you work." /></h2>
+            <p data-fade className="mt-4 max-w-md text-muted">
               Four core areas, with growth and visibility services alongside.
             </p>
             <div data-fade className="mt-8">
-              <Button variant="light" to="/solutions">Explore solutions</Button>
+              <Button variant="secondary" to="/solutions">Explore solutions</Button>
             </div>
           </div>
           <ServiceList onSelect={selector.open} />
         </div>
       </section>
 
-      <section id="pricing" className="shell scroll-mt-24 py-20 sm:py-32">
+      <section id="pricing" className="shell section scroll-mt-24">
         <div className="split">
-          <h2 data-split className="max-w-md text-title font-medium">Which best describes your organisation?</h2>
+          <h2 data-split className="max-w-xl text-heading"><Headline text="Which best describes your organisation?" /></h2>
           <div data-fade>
-            <p className="max-w-xl text-lead text-muted">Choose a starting point. Complexity can matter more than headcount, and we confirm the fit after an assessment.</p>
+            <p className="max-w-xl text-muted">Choose a starting point. Complexity can matter more than headcount, and we confirm the fit after an assessment.</p>
             <div className="mt-6"><MarketSelector /></div>
           </div>
         </div>
-        <ul className="mt-12">
+        <ul className="mt-12 border-b border-line">
           {segments.map((segment) => (
-            <li key={segment.id}>
-              <div data-rule className="h-px bg-line" />
-              <Link data-fade to="/pricing" onClick={() => setSegment(segment.id)} className="group grid gap-2 py-7 sm:grid-cols-2 sm:items-center sm:gap-16">
+            <li key={segment.id} data-fade className="border-t border-line">
+              <Link to="/pricing" onClick={() => setSegment(segment.id)} className="group grid gap-2 py-6 sm:grid-cols-2 sm:items-center sm:gap-16">
                 <span>
-                  <span className="block text-row font-medium transition-transform duration-500 ease-soft group-hover:translate-x-3">{segment.name}</span>
-                  <span className="mt-1 block text-sm font-semibold text-violet-deep">{segment.size}</span>
+                  <span className="block text-subheading transition-colors duration-300 group-hover:text-brand-deep">{segment.name}</span>
+                  <span className="mt-1 block text-sm text-muted">{segment.size}</span>
                 </span>
-                <span className="flex items-center justify-between gap-6 text-base leading-7 text-muted">
+                <span className="flex items-center justify-between gap-6 text-muted">
                   {segment.needs}
-                  <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-mist transition-colors duration-500 group-hover:bg-violet group-hover:text-paper">
-                    <ArrowUpRight className="h-4 w-4 transition-transform duration-500 ease-soft group-hover:rotate-45" />
-                  </span>
+                  <ArrowRight aria-hidden="true" className="h-5 w-5 shrink-0 text-brand-deep transition-transform duration-300 ease-soft group-hover:translate-x-1" />
                 </span>
               </Link>
             </li>
@@ -156,28 +110,25 @@ const Home = () => {
         </ul>
       </section>
 
-      <section className="shell pb-20 sm:pb-32">
-        <p data-scrub className="max-w-5xl text-title font-medium">
-          Good work starts with a clear conversation. We keep the process collaborative, practical, and focused on what you want to achieve.
-        </p>
-        <div className="split mt-20 sm:mt-28">
+      <section className="border-t border-line">
+        <div className="shell section split">
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <h2 data-split className="max-w-md text-title font-medium">A straightforward path from idea to launch.</h2>
+            <h2 data-split className="max-w-xl text-heading"><Headline text="A straightforward path from idea to launch." /></h2>
+            <p data-fade className="mt-4 max-w-md text-muted">
+              Good work starts with a clear conversation. We keep the process collaborative, practical, and focused on what you want to achieve.
+            </p>
             <div data-fade className="mt-8">
               <Button variant="secondary" to="/about">More about how we work</Button>
             </div>
-            <Photo {...photos.developer} className="mt-12 aspect-[4/3] max-w-md" />
+            <Photo {...photos.developer} className="mt-10 aspect-[4/3] max-w-md" />
           </div>
-          <ol>
+          <ol className="border-b border-line">
             {workflow.map((step) => (
-              <li key={step.number}>
-                <div data-rule className="h-px bg-line" />
-                <div data-fade className="grid grid-cols-[3.5rem_1fr] gap-4 py-8 sm:grid-cols-[6rem_1fr]">
-                  <span className="text-row font-medium tabular-nums text-violet">{step.number}</span>
-                  <div>
-                    <h3 className="text-row font-medium">{step.title}</h3>
-                    <p className="mt-3 max-w-md text-base leading-7 text-muted">{step.text}</p>
-                  </div>
+              <li key={step.number} data-fade className="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-line py-6">
+                <span className="text-subheading tabular-nums text-brand-deep">{step.number}</span>
+                <div>
+                  <h3 className="text-subheading">{step.title}</h3>
+                  <p className="mt-2 max-w-md text-muted">{step.text}</p>
                 </div>
               </li>
             ))}
@@ -185,30 +136,31 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="shell pb-20 sm:pb-32">
-        <div className="split">
-          <h2 data-split className="max-w-md text-title font-medium">Get to know the people behind our work.</h2>
-          <div data-fade><Button variant="secondary" to="/team">Meet the team</Button></div>
+      <section className="border-t border-line">
+        <div className="shell section">
+          <div className="split">
+            <h2 data-split className="max-w-xl text-heading"><Headline text="Get to know the people behind our work." /></h2>
+            <div data-fade><Button variant="secondary" to="/team">Meet the team</Button></div>
+          </div>
+          <ul className="mt-12 border-b border-line">
+            {teamMembers.map((member) => (
+              <li key={member.name} data-fade className="border-t border-line">
+                <Link to="/team" className="group grid gap-1 py-5 sm:grid-cols-2 sm:items-baseline sm:gap-16">
+                  <span className="text-subheading transition-colors duration-300 group-hover:text-brand-deep">{member.name}</span>
+                  <span className="text-muted">{member.role}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul className="mt-12">
-          {teamMembers.map((member) => (
-            <li key={member.name}>
-              <div data-rule className="h-px bg-line" />
-              <Link data-fade to="/team" className="group grid gap-1 py-6 sm:grid-cols-2 sm:items-baseline sm:gap-16">
-                <span className="text-row font-medium transition-transform duration-500 ease-soft group-hover:translate-x-3">{member.name}</span>
-                <span className="text-base text-muted">{member.role}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
       </section>
 
       <CallToAction
         title="Have a project in mind?"
         text="Tell us what you’re working on. We’ll start by understanding your idea and what you need next."
       >
-        <Button size="lg" variant="light" onClick={() => selector.open()}>Start a project</Button>
-        <Button size="lg" variant="glass" to="/contact">Book a discovery call</Button>
+        <Button size="lg" onClick={() => selector.open()}>Start a project</Button>
+        <Button size="lg" variant="secondary" to="/contact">Book a discovery call</Button>
       </CallToAction>
     </div>
   );

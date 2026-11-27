@@ -1,13 +1,11 @@
 import Button from '../components/Button';
 import CallToAction from '../components/CallToAction';
 import PageIntro from '../components/PageIntro';
-import ProductSummary from '../components/ProductSummary';
-import ProjectCard from '../components/ProjectCard';
+import ProjectGrid from '../components/ProjectGrid';
 import usePageMotion from '../hooks/usePageMotion';
 import useSeo from '../hooks/useSeo';
 import { caseStudyStandard, concepts, publishedCaseStudies } from '../content/caseStudies';
-import { products } from '../content/products';
-import { sampleProjects } from '../data/projects';
+import { productCards, sampleCards } from '../data/portfolio';
 
 const Work = () => {
   const motion = usePageMotion();
@@ -19,12 +17,12 @@ const Work = () => {
         We keep customer case studies, our own products, demonstrations and early concepts clearly apart.
       </PageIntro>
 
-      <section id="case-studies" className="shell scroll-mt-24 py-16 sm:py-24" aria-labelledby="cases-heading">
+      <section id="case-studies" className="shell scroll-mt-24 section" aria-labelledby="cases-heading">
         <div className="split">
-          <h2 id="cases-heading" data-split className="text-title font-medium">Case studies</h2>
+          <h2 id="cases-heading" data-split className="text-heading">Case studies</h2>
           <div data-fade>
             {publishedCaseStudies.length === 0 && (
-              <p className="max-w-xl text-lead text-muted">
+              <p className="max-w-xl text-muted">
                 No case studies are published yet. We publish one only with the customer’s permission and results we can evidence.
               </p>
             )}
@@ -32,8 +30,8 @@ const Work = () => {
         </div>
         {publishedCaseStudies.map((study) => (
           <article key={study.id} className="mt-10 border-t border-line pt-8">
-            <h3 className="text-row font-medium">{study.customer}</h3>
-            <p className="mt-1 text-sm font-semibold text-violet-deep">{study.sector} · {study.country}</p>
+            <h3 className="text-subheading">{study.customer}</h3>
+            <p className="mt-1 text-sm text-muted">{study.sector} · {study.country}</p>
             <p className="mt-4 max-w-3xl leading-7">{study.problem} {study.solution}</p>
             <p className="mt-3 max-w-3xl leading-7">{study.baseline} {study.outcome}</p>
             <p className="mt-3 max-w-3xl text-sm text-muted">{study.disclosure}</p>
@@ -42,55 +40,51 @@ const Work = () => {
         <dl className="mt-12 grid gap-x-16 md:grid-cols-2">
           {caseStudyStandard.map(([title, text]) => (
             <div key={title} data-fade className="border-t border-line py-6">
-              <dt className="text-xl font-medium">{title}</dt>
+              <dt className="font-medium">{title}</dt>
               <dd className="mt-2 leading-7 text-muted">{text}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <section className="shell border-t border-line py-16 sm:py-24" aria-labelledby="walk-heading">
+      <section className="shell border-t border-line section" aria-labelledby="walk-heading">
         <div className="split mb-10">
-          <h2 id="walk-heading" data-split className="text-title font-medium">Product walkthroughs</h2>
-          <p data-fade className="max-w-xl text-lead text-muted">Our own products, in beta. These are not customer case studies.</p>
+          <h2 id="walk-heading" data-split className="text-heading">Product walkthroughs</h2>
+          <p data-fade className="max-w-xl text-muted">Our own products, in beta. These are not customer case studies.</p>
         </div>
-        <div className="grid gap-x-6 gap-y-14 md:grid-cols-2 xl:grid-cols-3">
-          {products.map((product) => <ProductSummary key={product.id} product={product} />)}
-        </div>
+        <ProjectGrid items={productCards} />
       </section>
 
-      <section id="demonstrations" className="shell scroll-mt-24 border-t border-line py-16 sm:py-24" aria-labelledby="sample-heading">
+      <section id="demonstrations" className="shell scroll-mt-24 border-t border-line section" aria-labelledby="sample-heading">
         <div className="split mb-10">
-          <h2 id="sample-heading" data-split className="text-title font-medium">Demonstrations and sample builds</h2>
-          <p data-fade className="max-w-xl text-lead text-muted">
+          <h2 id="sample-heading" data-split className="text-heading">Demonstrations and sample builds</h2>
+          <p data-fade className="max-w-xl text-muted">
             Sample websites for an invented perfume house and tech shop. They are not client projects.
           </p>
         </div>
-        <div className="grid gap-x-6 gap-y-14 md:grid-cols-2">
-          {sampleProjects.map((project) => <ProjectCard key={project.name} project={project} />)}
-        </div>
+        <ProjectGrid items={sampleCards} />
       </section>
 
-      <section className="shell border-t border-line py-16 sm:py-24" aria-labelledby="concept-heading">
+      <section className="shell border-t border-line section" aria-labelledby="concept-heading">
         <div className="split">
-          <h2 id="concept-heading" data-split className="text-title font-medium">Concepts in development</h2>
-          <p data-fade className="max-w-xl text-lead text-muted">Ideas we are exploring. They are not launched products.</p>
+          <h2 id="concept-heading" data-split className="text-heading">Concepts in development</h2>
+          <p data-fade className="max-w-xl text-muted">Ideas we are exploring. They are not launched products.</p>
         </div>
         <div className="mt-10">
           {concepts.map((concept) => (
             <article key={concept.name} data-fade className="grid gap-3 border-t border-line py-8 lg:grid-cols-2 lg:gap-16">
               <div>
-                <h3 className="text-row font-medium">{concept.name}</h3>
-                <p className="mt-1 text-sm font-semibold text-violet-deep">{concept.category}</p>
+                <h3 className="text-subheading">{concept.name}</h3>
+                <p className="mt-1 text-sm text-muted">{concept.category}</p>
               </div>
-              <p className="max-w-xl text-lead text-muted">{concept.description}</p>
+              <p className="max-w-xl text-muted">{concept.description}</p>
             </article>
           ))}
         </div>
       </section>
 
       <CallToAction title="Have a project in mind?" text="Tell us what you’re working on and what you need next.">
-        <Button size="lg" variant="light" to="/contact">Start a project</Button>
+        <Button size="lg" to="/contact">Start a project</Button>
       </CallToAction>
     </div>
   );
